@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ municipality.name }} - Inmobiliaria Valle de Aburrá{% endblock %}
+
+{% block content %}
+<section class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'properties:list' %}">Propiedades</a></li>
+            <li class="breadcrumb-item active">{{ municipality.name }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">Propiedades en {{ municipality.name }}</h1>
+
+    <!-- Municipality Info -->
+    <div class="alert alert-success mb-4">
+        <strong>{{ municipality.zone.name }}</strong> - {{ properties.count }} propiedades disponibles
+    </div>
+
+    <!-- Properties Grid -->
+    {% if properties %}
+    <div class="row">
+        {% for property in properties %}
+        <div class="col-md-4 mb-4">
+            {% include 'partials/property_card.html' %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No hay propiedades en este municipio todavía.
+                    </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="container mt-4">
+    {% if user.is_admin %}
+    <h1 class="mb-4">Panel de Administración</h1>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-house-fill text-success" style="font-size: 3rem;"></i>
+                    <h3 class="mt-2">{{ total_properties }}</h3>
+                    <p class="text-muted mb-3">Propiedades</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-people-fill text-primary" style="font-size: 3rem;"></i>
+                    <h3 class="mt-2">{{ total_vendors }}</h3>
+                    <p class="text-muted mb-3">Vendedores</p>
+                    <a href="{% url 'admin:users_user_changelist' %}" class="btn btn-outline-primary">Gestionar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-person-badge text-warning" style="font-size: 3rem;"></i>
+                    <h3 class="mt-2">{{ total_users }}</h3>
+                    <p class="text-muted mb-3">Usuarios Totales</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <h1 class="mb-4">Mi Panel</h1>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-house-fill text-success" style="font-size: 3rem;"></i>
+                    <h3 class="mt-2">{{ my_properties }}</h3>
+                    <p class="text-muted mb-3">Mis Propiedades</p>
+                    <a href="{% url 'dashboard:property_list' %}" class="btn btn-success">Ver todas</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-plus-circle text-primary" style="font-size: 3rem;"></i>
+                    <h3 class="mt-2">Publicar</h3>
+                    <p class="text-muted mb-3">Nueva Propiedad</p>
+                    <a href="{% url 'dashboard:property_create' %}" class="btn btn-primary">Crear</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

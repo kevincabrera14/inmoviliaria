@@ -1,0 +1,37 @@
+<div class="card h-100">
+    {% with primary_image=property.images.first %}
+    {% if primary_image %}
+    <img src="{{ primary_image.image.url }}" class="card-img-top" alt="{{ property.title }}">
+    {% else %}
+    <div class="card-img-top d-flex align-items-center justify-content-center bg-light">
+        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="card-body">
+        <span class="badge bg-success mb-2">{{ property.get_operation_type_display }}</span>
+        <h5 class="card-title">{{ property.title|truncatechars:40 }}</h5>
+        <p class="card-text text-muted">
+            <i class="bi bi-geo-alt"></i> {{ property.municipality.name }}
+        </p>
+        <p class="card-text">
+            <strong class="text-success fs-5">${{ property.price|floatformat:0 }}</strong>
+            {% if property.operation_type == 'arriendo' %}<small class="text-muted">/mes</small>{% endif %}
+        </p>
+        <div class="d-flex justify-content-between text-muted small">
+            {% if property.area %}
+            <span><i class="bi bi-rulers"></i> {{ property.area }} m²</span>
+            {% endif %}
+            {% if property.rooms %}
+            <span><i class="bi bi-door-open"></i> {{ property.rooms }}</span>
+            {% endif %}
+            {% if property.bathrooms %}
+            <span><i class="bi bi-droplet"></i> {{ property.bathrooms }}</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-footer bg-white border-0">
+        <a href="{% url 'properties:detail' property.pk %}" class="btn btn-outline-success w-100">Ver detalle</a>
+    </div>
+</div>

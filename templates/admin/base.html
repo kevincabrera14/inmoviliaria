@@ -1,0 +1,90 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/admin.css' %}">
+<style>
+    :root {
+        --primary-color: #2c5f2d;
+        --secondary-color: #97bc62;
+    }
+
+    /* Header */
+    #header {
+        background-color: var(--primary-color) !important;
+        border-bottom: 3px solid var(--secondary-color) !important;
+    }
+
+    #branding h1 {
+        color: white !important;
+    }
+
+    /* User tools */
+    #user-tools a {
+        color: white !important;
+    }
+
+    #user-tools a:hover {
+        color: var(--secondary-color) !important;
+    }
+
+    /* Module headers */
+    .module h2, .module caption {
+        background-color: var(--primary-color) !important;
+    }
+
+    /* Buttons */
+    .button, input[type="submit"], .submit-row input {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    .button:hover, input[type="submit"]:hover {
+        background-color: #1e4220 !important;
+    }
+
+    /* Links */
+    a {
+        color: var(--primary-color) !important;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+        background-color: white;
+        border-left: 4px solid var(--primary-color);
+        padding: 10px 15px;
+    }
+
+    /* Object tools */
+    .object-tools a {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    /* Success messages */
+    .messagelist li {
+        background-color: #e8f5e9 !important;
+        border-left: 4px solid var(--primary-color) !important;
+    }
+
+    /* Table rows hover */
+    #result_list tbody tr:hover {
+        background-color: #e8f5e9 !important;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <i class="bi bi-house-fill"></i> Inmobiliaria VdA
+    </a>
+</h1>
+{% endblock %}
+
+{% block footer %}
+<div id="footer">
+    <p>&copy; 2026 Inmobiliaria Valle de Aburrá - Panel de Administración</p>
+</div>
+{% endblock %}

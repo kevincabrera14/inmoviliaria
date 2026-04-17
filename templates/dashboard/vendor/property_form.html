@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Propiedad - Dashboard{% endblock %}
+
+{% block content %}
+<section class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:property_list' %}">Propiedades</a></li>
+            <li class="breadcrumb-item active">{{ action }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">{{ action }} Propiedad</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Información Básica</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label for="id_title" class="form-label">Título</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="id_status" class="form-label">Estado</label>
+                        {{ form.status }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="id_description" class="form-label">Descripción</label>
+                    {{ form.description }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Detalles</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="id_property_type" class="form-label">Tipo de Propiedad</label>
+                        {{ form.property_type }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="id_operation_type" class="form-label">Tipo de Operación</label>
+                        {{ form.operation_type }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="id_price" class="form-label">Precio</label>
+                        {{ form.price }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="id_area" class="form-label">Área (m²)</label>
+                        {{ form.area }}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="id_rooms" class="form-label">Habitaciones</label>
+                        {{ form.rooms }}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="id_bathrooms" class="form-label">Baños</label>
+                        {{ form.bathrooms }}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="id_municipality" class="form-label">Municipio</label>
+                        {{ form.municipality }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Ubicación</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="id_address" class="form-label">Dirección</label>
+                    {{ form.address }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Imágenes</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="id_images" class="form-label">Seleccionar imágenes</label>
+                    <input type="file" name="images" class="form-control" multiple accept="image/*">
+                    <small class="text-muted">Puedes seleccionar múltiples imágenes</small>
+                </div>
+                {% if property %}
+                <div class="row">
+                    {% for img in property.images.all %}
+                    <div class="col-md-3 mb-2">
+                        <img src="{{ img.image.url }}" class="img-thumbnail" alt="">
+                        {% if img.is_primary %}<span class="badge bg-success">Principal</span>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-success btn-lg">
+                <i class="bi bi-check-circle"></i> Guardar Propiedad
+            </button>
+        </div>
+    </form>
+</section>
+{% endblock %}
