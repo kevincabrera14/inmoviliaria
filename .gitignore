@@ -53,7 +53,6 @@ Thumbs.db
 .railway/
 
 # Static files
-static/
 staticfiles/
 
 # Asegurar que las migraciones NO se ignoren
