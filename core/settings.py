@@ -14,7 +14,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-# Permitir todos los hosts para evitar errores 502/400 en Railway
+# Permitir todos los hosts en Railway para evitar errores de conexión
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     # Third party
     'crispy_bootstrap5',
     'crispy_forms',
-    # Local apps - Asegúrate de que coincidan con tus carpetas
+    # Local apps
     'users.apps.UsersConfig',
     'locations.apps.LocationsConfig',
     'properties.apps.PropertiesConfig',
@@ -66,7 +66,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 # --- CONFIGURACIÓN DE BASE DE DATOS ---
-# dj_database_url configura automáticamente Django usando la variable DATABASE_URL de Railway
 DATABASES = {
     'default': dj_database_url.config(
         conn_max_age=600,
@@ -74,7 +73,7 @@ DATABASES = {
     )
 }
 
-# Si no hay variable DATABASE_URL (para trabajar en tu PC local), usa SQLite
+# Fallback para SQLite en desarrollo local
 if not os.getenv('DATABASE_URL'):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
