@@ -1,16 +1,47 @@
-# Sistema Inmobiliario - El Valle de Aburrá
+# Inmobiliaria Medellín
 
-## 1. Concepto & Visión
+## 1. Concept & Vision
 
-Plataforma inmobiliaria para gestionar propiedades en los 10 municipios del Valle de Aburrá (Antioquia, Colombia). Sistema robusto con roles diferenciados: admins gestionan vendedores, vendedores publican propiedades, clientes navegan sin registro. Interfaz limpia centrada en la ubicación geográfica.
+Plataforma inmobiliaria moderna para gestionar propiedades en los 10 municipios del Valle de Aburrá (Antioquia, Colombia). Sistema robusto con roles diferenciados: admins gestionan vendedores, vendedores publican propiedades, clientes navegan sin registro. Interfaz minimalista centrada en la ubicación geográfica, diseño mobile-first con colores azules profesionales.
 
-## 2. Arquitectura
+## 2. Design System
+
+### Colors
+- **Primary**: #1e3a5f (Azul marino)
+- **Primary Light**: #2a4a73
+- **Secondary**: #4a90d9 (Azul claro)
+- **Accent**: #64b5f6 (Azul brillante)
+- **Background**: #ffffff
+- **Surface**: #f8fafc
+- **Text**: #1e293b
+- **Text Muted**: #64748b
+- **Border**: #e2e8f0
+- **Success**: #10b981
+- **Error**: #ef4444
+
+### Typography
+- **Font Family**: Inter (Google Fonts)
+- **Weights**: 400, 500, 600, 700
+
+### Mobile-First Breakpoints
+- Mobile: < 576px
+- Tablet: 576px - 992px
+- Desktop: > 992px
+
+### CSS Architecture
+- Custom CSS (sin framework)
+- CSS Variables para theming
+- Grid system propio
+- Componentes reutilizables
+
+## 3. Arquitectura
 
 ### Stack
 - **Backend**: Django 5 + Django REST Framework
 - **Base de datos**: PostgreSQL (Railway)
-- **Almacenamiento imágenes**: WhiteNoise o Cloudinary
+- **Almacenamiento imágenes**: WhiteNoise
 - **Deployment**: Railway
+- **CSS**: Custom (sin framework)
 
 ### Estructura de Apps
 ```
@@ -18,10 +49,10 @@ core/
 ├── users/           # Modelo User custom, auth, roles
 ├── properties/      # Modelo Property, imágenes, CRUD
 ├── locations/       # Modelo Municipality, Zone
-└── core/           # Configuración principal, URLs, settings
+└── core/            # Configuración principal, URLs, settings
 ```
 
-## 3. Modelos
+## 4. Modelos
 
 ### User (extend Django AbstractUser)
 - `role`: choices [admin, vendedor, cliente]
@@ -31,6 +62,7 @@ core/
 
 ### Zone
 - `name`: string (Aburrá Norte, Centro, Sur)
+- `slug`: slug único
 - `order`: int para ordenamiento
 
 ### Municipality
@@ -62,7 +94,7 @@ core/
 - `is_primary`: boolean
 - `order`: int
 
-## 4. Roles & Permisos
+## 5. Roles & Permisos
 
 ### Admin
 - CRUD completo de vendedores
@@ -83,89 +115,64 @@ core/
 - Ver detalle de propiedad
 - Contacto (email/WhatsApp)
 
-## 5. Vistas Pública (Cliente - sin login)
-
-### Página Principal
-- Header con logo, navegación por zonas
-- Hero con búsqueda rápida
-- Grid de propiedades recientes
-- Filtros: zona, municipio, tipo, operación, rango precio
-
-### Vista por Municipio
-- `/propiedades/<municipio>/` - lista filtrada
-- Template agrupado por zona (Norte, Centro, Sur)
-- Sidebar con filtros
-- Paginación
-
-### Detalle Propiedad
-- Galería de imágenes
-- Toda la información
-- Botón contacto (email o WhatsApp)
-- Propiedades relacionadas
-
-## 6. Admin/Vendedor Dashboard
-
-### Admin
-- Lista vendedores con estado
-- Estadísticas del sistema
-- Todas las propiedades
-
-### Vendedor
-- Mis propiedades
-- Crear/editar propiedad
-- Subir imágenes (drag & drop)
-- Preview antes de publicar
-
-## 7. URLs
+## 6. URLs
 
 ```
 # Público
 /                           # Landing con propiedades
-/propiedades/<municipio>/    # Por municipio
-/propiedad/<id>/            # Detalle
+/propiedades/              # Lista todas
+/propiedades/<municipio>/  # Por municipio
+/propiedad/<id>/          # Detalle
 
 # Auth
-/login/
-/logout/
+/users/login/
+/users/logout/
 
-# Admin (solo admin)
-/admin/dashboard/
-/admin/vendedores/
-/admin/vendedores/add/
+# Admin
+/adminapp/                  # Django admin
 
-# Vendedor (admin y vendedor)
-/dashboard/                 # Panel principal
-/propiedades/mis-propiedades/
-/propiedades/crear/
-/propiedades/<id>/editar/
-/propiedades/<id>/eliminar/
+# Dashboard
+/dashboard/                # Panel principal
+/dashboard/propiedades/    # Lista mis propiedades
+/dashboard/propiedades/crear/
+/dashboard/propiedades/<id>/editar/
+/dashboard/propiedades/<id>/eliminar/
 ```
 
-## 8. Templates
+## 7. Templates
 
 ```
 templates/
-├── base.html
-├── home.html
+├── base.html              # Base con header/footer
+├── home.html              # Landing page
 ├── properties/
-│   ├── list.html          # Lista pública
-│   ├── detail.html        # Detalle
-│   └── filter.html        # Filtros sidebar
+│   ├── list.html          # Lista por municipio
+│   └── detail.html        # Detalle propiedad
 ├── dashboard/
-│   ├── base.html
-│   ├── admin/
-│   │   └── dashboard.html
+│   ├── base.html          # Dashboard base
 │   └── vendor/
 │       ├── dashboard.html
+│       ├── property_list.html
 │       └── property_form.html
 ├── users/
-│   ├── login.html
-│   └── profile.html
+│   └── login.html
+├── admin/
+│   └── base.html          # Admin custom theme
 └── partials/
     ├── header.html
     ├── footer.html
-    ├── property_card.html
-    └── pagination.html
+    └── property_card.html
+```
+
+## 8. Static Files
+
+```
+static/
+├── css/
+│   └── style.css          # Estilos custom mobile-first
+└── admin/
+    └── css/
+        └── admin.css      # Theme admin
 ```
 
 ## 9. Variables de Entorno (.env)
@@ -176,18 +183,18 @@ SECRET_KEY=...
 DATABASE_URL=postgres://...
 ALLOWED_HOSTS=.railway.app
 EMAIL_HOST=smtp.mailgun.org
-EMAIL_FROM=contacto@inmobiliaria.com
+EMAIL_FROM=info@inmobiliariamedellin.com
 WHATSAPP_NUMBER=+573001234567
 ```
 
-## 10.部署 Railway
+## 10. Deployment Railway
 
 - `runtime.txt`: python-3.11
-- `requirements.txt`: Django, gunicorn, whitenoise, psycopg2-binary, dj-database-url
+- `requirements.txt`: Django, gunicorn, whitenoise, psycopg2-binary, dj-database-url, python-dotenv
 - `railway.json`: configuración de servicio
 - `.gitignore`: excludes __pycache__, .env, *.pyc
 
-## 11.优先级 de implementación
+## 11. Implementación
 
 1. **Fase 1**: Modelos, admin Django, autenticación
 2. **Fase 2**: CRUD propiedades con imágenes

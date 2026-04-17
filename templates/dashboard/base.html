@@ -2,64 +2,133 @@
 
 {% block title %}Dashboard{% endblock %}
 
+{% block extra_css %}
+<style>
+.dashboard-layout {
+    display: grid;
+    gap: 24px;
+    padding: 24px 0;
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 8px;
+}
+
+.dashboard-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.dashboard-header p {
+    margin: 8px 0 0;
+    opacity: 0.9;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.stat-card i {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.stat-card h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+}
+
+.stat-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 4px 0 12px;
+}
+
+@media (min-width: 576px) {
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="container mt-4">
-    {% if user.is_admin %}
-    <h1 class="mb-4">Panel de Administración</h1>
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card text-center h-100">
-                <div class="card-body d-flex flex-column justify-content-center">
-                    <i class="bi bi-house-fill text-success" style="font-size: 3rem;"></i>
-                    <h3 class="mt-2">{{ total_properties }}</h3>
-                    <p class="text-muted mb-3">Propiedades</p>
+<div class="container">
+    <div class="dashboard-layout">
+        <div class="dashboard-header">
+            <h1>{% if user.is_admin %}Panel de Administración{% else %}Mi Panel{% endif %}</h1>
+            <p>Bienvenido, {{ user.username }}</p>
+        </div>
+
+        {% if user.is_admin %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="bi bi-building"></i>
+                <h3>{{ total_properties }}</h3>
+                <p>Propiedades</p>
+                <a href="{% url 'admin:properties_property_changelist' %}" class="btn btn-outline">Ver todas</a>
+            </div>
+            <div class="stat-card">
+                <i class="bi bi-people"></i>
+                <h3>{{ total_vendors }}</h3>
+                <p>Vendedores</p>
+                <a href="{% url 'admin:users_user_changelist' %}" class="btn btn-outline">Gestionar</a>
+            </div>
+            <div class="stat-card">
+                <i class="bi bi-person-badge"></i>
+                <h3>{{ total_users }}</h3>
+                <p>Usuarios Totales</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 16px;">Acciones Rápidas</h3>
+                <div style="display: grid; gap: 12px;">
+                    <a href="{% url 'admin:users_user_changelist' %}" class="btn btn-primary">
+                        <i class="bi bi-people"></i> Gestionar Vendedores
+                    </a>
+                    <a href="{% url 'admin:properties_property_changelist' %}" class="btn btn-outline">
+                        <i class="bi bi-building"></i> Ver Todas las Propiedades
+                    </a>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card text-center h-100">
-                <div class="card-body d-flex flex-column justify-content-center">
-                    <i class="bi bi-people-fill text-primary" style="font-size: 3rem;"></i>
-                    <h3 class="mt-2">{{ total_vendors }}</h3>
-                    <p class="text-muted mb-3">Vendedores</p>
-                    <a href="{% url 'admin:users_user_changelist' %}" class="btn btn-outline-primary">Gestionar</a>
-                </div>
+        {% else %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="bi bi-building"></i>
+                <h3>{{ my_properties }}</h3>
+                <p>Mis Propiedades</p>
+                <a href="{% url 'dashboard:property_list' %}" class="btn btn-outline">Ver todas</a>
+            </div>
+            <div class="stat-card">
+                <i class="bi bi-plus-circle"></i>
+                <h3>+</h3>
+                <p>Nueva Propiedad</p>
+                <a href="{% url 'dashboard:property_create' %}" class="btn btn-primary">Crear</a>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card text-center h-100">
-                <div class="card-body d-flex flex-column justify-content-center">
-                    <i class="bi bi-person-badge text-warning" style="font-size: 3rem;"></i>
-                    <h3 class="mt-2">{{ total_users }}</h3>
-                    <p class="text-muted mb-3">Usuarios Totales</p>
-                </div>
-            </div>
-        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <h1 class="mb-4">Mi Panel</h1>
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="card text-center h-100">
-                <div class="card-body d-flex flex-column justify-content-center">
-                    <i class="bi bi-house-fill text-success" style="font-size: 3rem;"></i>
-                    <h3 class="mt-2">{{ my_properties }}</h3>
-                    <p class="text-muted mb-3">Mis Propiedades</p>
-                    <a href="{% url 'dashboard:property_list' %}" class="btn btn-success">Ver todas</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 mb-4">
-            <div class="card text-center h-100">
-                <div class="card-body d-flex flex-column justify-content-center">
-                    <i class="bi bi-plus-circle text-primary" style="font-size: 3rem;"></i>
-                    <h3 class="mt-2">Publicar</h3>
-                    <p class="text-muted mb-3">Nueva Propiedad</p>
-                    <a href="{% url 'dashboard:property_create' %}" class="btn btn-primary">Crear</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-</section>
+</div>
 {% endblock %}

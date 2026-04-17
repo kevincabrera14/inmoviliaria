@@ -1,50 +1,101 @@
-<nav class="navbar navbar-expand-lg navbar-dark">
+<header class="header">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}">
-            <i class="bi bi-house-fill"></i> Inmobiliaria VdA
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'properties:list' %}">Propiedades</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                        Zonas
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% for zone in zones %}
-                        <li><h6 class="dropdown-header">{{ zone.name }}</h6></li>
-                        {% for muni in zone.municipalities.all %}{% if muni.slug %}
-                        <li><a class="dropdown-item" href="{% url 'properties:by_municipality' muni.slug %}">{{ muni.name }}</a></li>
-                        {% endif %}{% endfor %}
-                        {% endfor %}
-                    </ul>
-                </li>
-            </ul>
-            <ul class="navbar-nav">
-                {% if user.is_authenticated %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i> {{ user.username }}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{% url 'users:logout' %}">Cerrar sesión</a></li>
-                    </ul>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'users:login' %}">
-                        <i class="bi bi-box-arrow-in-right"></i> Ingresar
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
+        <div class="header-inner">
+            <a href="{% url 'home' %}" class="logo">
+                <i class="bi bi-building"></i>
+                <span>Inmobiliaria Medellín</span>
+            </a>
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="{% url 'properties:list' %}" class="nav-link">Propiedades</a></li>
+                    <li class="nav-dropdown-wrapper">
+                        <a href="#" class="nav-link" onclick="toggleDropdown(event)">Zonas <i class="bi bi-chevron-down"></i></a>
+                        <ul class="nav-dropdown">
+                            {% for zone in zones %}
+                            <li>
+                                <span class="nav-dropdown-title">{{ zone.name }}</span>
+                                {% for muni in zone.municipalities.all %}{% if muni.slug %}
+                                <a href="{% url 'properties:by_municipality' muni.slug %}">{{ muni.name }}</a>
+                                {% endif %}{% endfor %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
-</nav>
+</header>
+
+<script>
+function toggleMenu() {
+    document.getElementById('mainNav').classList.toggle('active');
+}
+
+function toggleDropdown(e) {
+    e.preventDefault();
+    const dropdown = e.target.closest('.nav-dropdown-wrapper').querySelector('.nav-dropdown');
+    dropdown.classList.toggle('active');
+}
+</script>
+
+<style>
+.nav-dropdown-wrapper {
+    position: relative;
+}
+
+.nav-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--primary-light);
+    min-width: 200px;
+    padding: 8px 0;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    z-index: 1000;
+}
+
+.nav-dropdown.active {
+    display: block;
+}
+
+.nav-dropdown li {
+    padding: 0;
+}
+
+.nav-dropdown-title {
+    display: block;
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+}
+
+.nav-dropdown a {
+    display: block;
+    padding: 8px 16px;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.nav-dropdown a:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+@media (min-width: 576px) {
+    .nav-dropdown-wrapper:hover .nav-dropdown {
+        display: block;
+    }
+    .nav-dropdown-title {
+        pointer-events: none;
+    }
+}
+</style>

@@ -1,29 +1,25 @@
-<footer class="bg-dark text-white py-4 mt-5">
+<footer class="footer">
     <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <h5>Inmobiliaria Valle de Aburrá</h5>
-                <p class="text-muted">Tu hogar en los 10 municipios de Antioquia</p>
+        <div class="footer-grid">
+            <div>
+                <h4>Inmobiliaria Medellín</h4>
+                <p>Tu socio de confianza en el mercado inmobiliario de Medellín y el Valle de Aburrá.</p>
             </div>
-            <div class="col-md-4">
-                <h5>Zonas</h5>
-                <ul class="list-unstyled">
-                    <li><a href="#" class="text-white">Aburrá Norte</a></li>
-                    <li><a href="#" class="text-white">Aburrá Centro</a></li>
-                    <li><a href="#" class="text-white">Aburrá Sur</a></li>
-                </ul>
+            <div>
+                <h4>Contacto</h4>
+                <p><i class="bi bi-geo-alt"></i> Medellín, Antioquia</p>
+                <p><i class="bi bi-telephone"></i> +57 300 123 4567</p>
+                <p><i class="bi bi-envelope"></i> info@inmobiliariamedellin.com</p>
             </div>
-            <div class="col-md-4">
-                <h5>Contacto</h5>
-                <p class="text-muted">
-                    <i class="bi bi-envelope"></i> contacto@inmobiliaria.com<br>
-                    <i class="bi bi-telephone"></i> +57 300 123 4567
-                </p>
+            <div>
+                <h4>Enlaces</h4>
+                <p><a href="{% url 'home' %}">Inicio</a></p>
+                <p><a href="{% url 'properties:list' %}">Propiedades</a></p>
+                <p><a href="{% url 'users:login' %}">Portal Vendedores</a></p>
             </div>
         </div>
-        <hr class="bg-secondary">
-        <p class="text-center text-muted mb-0">
-            &copy; 2026 Inmobiliaria Valle de Aburrá. Todos los derechos reservados.
-        </p>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Inmobiliaria Medellín. Todos los derechos reservados.</p>
+        </div>
     </div>
 </footer>

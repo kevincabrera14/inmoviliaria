@@ -1,136 +1,127 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ property.title }} - Inmobiliaria Valle de Aburrá{% endblock %}
+{% block title %}{{ property.title }} - Inmobiliaria Medellín{% endblock %}
 
 {% block content %}
-<section class="container mt-4">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'properties:list' %}">Propiedades</a></li>
+<section class="section">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">Inicio</a>
+            <span>/</span>
+            <a href="{% url 'properties:list' %}">Propiedades</a>
+            <span>/</span>
             {% if property.municipality.slug %}
-            <li class="breadcrumb-item"><a href="{% url 'properties:by_municipality' property.municipality.slug %}">{{ property.municipality.name }}</a></li>
+            <a href="{% url 'properties:by_municipality' property.municipality.slug %}">{{ property.municipality.name }}</a>
             {% else %}
-            <li class="breadcrumb-item">{{ property.municipality.name }}</li>
+            <span>{{ property.municipality.name }}</span>
             {% endif %}
-            <li class="breadcrumb-item active">{{ property.title|truncatechars:30 }}</li>
-        </ol>
-    </nav>
+            <span>/</span>
+            <span>{{ property.title|truncatechars:30 }}</span>
+        </nav>
 
-    <div class="row">
-        <!-- Images -->
-        <div class="col-md-8">
-            <div class="card mb-4">
+        <div style="display: grid; gap: 24px;">
+            <!-- Images -->
+            <div class="card">
                 {% if images %}
-                <img src="{{ images.0.image.url }}" class="card-img-top" alt="{{ property.title }}" style="height: 400px; object-fit: cover;">
+                <img src="{{ images.0.image.url }}" alt="{{ property.title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
                 {% if images.count > 1 %}
-                <div class="card-body">
-                    <div class="row">
-                        {% for img in images|slice:"1:" %}
-                        <div class="col-3">
-                            <img src="{{ img.image.url }}" class="img-thumbnail" alt="">
-                        </div>
-                        {% endfor %}
-                    </div>
+                <div style="display: flex; gap: 8px; padding: 16px; overflow-x: auto;">
+                    {% for img in images|slice:"1:" %}
+                    <img src="{{ img.image.url }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius);">
+                    {% endfor %}
                 </div>
                 {% endif %}
                 {% else %}
-                <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 400px;">
-                    <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
+                <div style="height: 300px; display: flex; align-items: center; justify-content: center; background: var(--surface);">
+                    <i class="bi bi-image" style="font-size: 4rem; color: var(--text-muted);"></i>
                 </div>
                 {% endif %}
             </div>
 
             <!-- Details -->
-            <div class="card mb-4">
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0">{{ property.title }}</h4>
-                </div>
+            <div class="card">
                 <div class="card-body">
-                    <h2 class="text-success mb-3">${{ property.price|floatformat:0 }}
-                        <small class="text-muted">
-                            {% if property.operation_type == 'arriendo' %}/mes{% endif %}
-                        </small>
-                    </h2>
+                    <h1 class="card-title" style="font-size: 1.5rem; margin-bottom: 8px;">{{ property.title }}</h1>
+                    <p class="card-price">
+                        ${{ property.price|floatformat:0 }}
+                        <span>/{{ property.get_operation_type_display }}</span>
+                    </p>
 
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <i class="bi bi-geo-alt"></i> {{ property.municipality.name }}
+                    <div class="property-info">
+                        <div class="property-info-item">
+                            <i class="bi bi-geo-alt"></i>
+                            <span>{{ property.municipality.name }}</span>
                         </div>
-                        <div class="col-md-3">
-                            <i class="bi bi-house"></i> {{ property.get_property_type_display }}
+                        <div class="property-info-item">
+                            <i class="bi bi-house"></i>
+                            <span>{{ property.get_property_type_display }}</span>
                         </div>
                         {% if property.area %}
-                        <div class="col-md-3">
-                            <i class="bi bi-rulers"></i> {{ property.area }} m²
+                        <div class="property-info-item">
+                            <i class="bi bi-rulers"></i>
+                            <span>{{ property.area }} m²</span>
                         </div>
                         {% endif %}
                         {% if property.rooms %}
-                        <div class="col-md-3">
-                            <i class="bi bi-door-open"></i> {{ property.rooms }} hab.
+                        <div class="property-info-item">
+                            <i class="bi bi-door-open"></i>
+                            <span>{{ property.rooms }} habitaciones</span>
+                        </div>
+                        {% endif %}
+                        {% if property.bathrooms %}
+                        <div class="property-info-item">
+                            <i class="bi bi-droplet"></i>
+                            <span>{{ property.bathrooms }} baños</span>
                         </div>
                         {% endif %}
                     </div>
 
-                    <h5>Descripción</h5>
-                    <p>{{ property.description|linebreaks }}</p>
+                    <div class="property-description">
+                        <h5>Descripción</h5>
+                        <p>{{ property.description|linebreaks }}</p>
 
-                    <h5>Dirección</h5>
-                    <p>{{ property.address }}</p>
+                        <h5>Dirección</h5>
+                        <p>{{ property.address }}</p>
 
-                    {% if property.features %}
-                    <h5>Características adicionales</h5>
-                    <ul>
-                        {% for key, value in property.features.items %}
-                        <li>{{ key|title }}: {{ value }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
+                        {% if property.features %}
+                        <h5>Características adicionales</h5>
+                        <ul>
+                            {% for key, value in property.features.items %}
+                            <li>{{ key|title }}: {{ value }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Sidebar -->
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Contactar</h5>
-                </div>
-                <div class="card-body">
-                    {% if property.published_by %}
-                    <p class="mb-2">
-                        <i class="bi bi-person"></i> {{ property.published_by.get_full_name|default:property.published_by.username }}
-                    </p>
-                    {% if property.published_by.telefono %}
-                    <p class="mb-3">
-                        <i class="bi bi-telephone"></i> {{ property.published_by.telefono }}
-                    </p>
-                    {% endif %}
-                    {% endif %}
-
-                    <a href="https://wa.me/{{ whatsapp_number }}?text=Hola, me interesa la propiedad: {{ property.title }}" target="_blank" class="btn btn-success w-100 mb-2">
+            <!-- Contact -->
+            <div class="contact-card">
+                <h5>Contactar al vendedor</h5>
+                {% if property.published_by %}
+                <p><i class="bi bi-person"></i> {{ property.published_by.get_full_name|default:property.published_by.username }}</p>
+                {% if property.published_by.telefono %}
+                <p><i class="bi bi-telephone"></i> {{ property.published_by.telefono }}</p>
+                {% endif %}
+                {% endif %}
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 16px;">
+                    <a href="https://wa.me/{{ whatsapp_number }}?text=Hola, me interesa la propiedad: {{ property.title }}" target="_blank" class="btn btn-primary">
                         <i class="bi bi-whatsapp"></i> WhatsApp
                     </a>
-                    <a href="mailto:?subject=Interés en {{ property.title }}" class="btn btn-outline-primary w-100">
-                        <i class="bi bi-envelope"></i> Enviar correo
+                    <a href="mailto:?subject=Interés en {{ property.title }}" class="btn btn-outline">
+                        <i class="bi bi-envelope"></i> Email
                     </a>
                 </div>
             </div>
 
+            <!-- Related Properties -->
             {% if related %}
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Propiedades relacionadas</h5>
-                </div>
-                <div class="card-body">
+            <div>
+                <h2 class="section-title">Propiedades relacionadas</h2>
+                <div class="grid">
                     {% for rel in related %}
-                    <div class="mb-3">
-                        <a href="{% url 'properties:detail' rel.pk %}">
-                            <strong>{{ rel.title }}</strong><br>
-                            <small class="text-success">${{ rel.price|floatformat:0 }}</small>
-                        </a>
-                    </div>
+                    {% include 'partials/property_card.html' %}
                     {% endfor %}
                 </div>
             </div>

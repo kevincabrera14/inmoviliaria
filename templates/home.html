@@ -1,106 +1,101 @@
 {% extends 'base.html' %}
 
-{% block title %}Inicio - Inmobiliaria Valle de Aburrá{% endblock %}
+{% block title %}Inicio - Inmobiliaria Medellín{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<section class="bg-light py-5 mb-4">
+<section class="hero">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="display-4 fw-bold text-success">Encuentra tu hogar en el Valle de Aburrá</h1>
-                <p class="lead text-muted">Casas, apartamentos y más en los 10 municipios de Antioquia</p>
-            </div>
-            <div class="col-md-4">
-                <a href="{% url 'users:login' %}" class="btn btn-success btn-lg w-100">
-                    <i class="bi bi-person-plus"></i> Portal Vendedores
-                </a>
-            </div>
-        </div>
+        <h1>Encuentra tu hogar en Medellín</h1>
+        <p>Casas, apartamentos y más en los 10 municipios del Valle de Aburrá</p>
+        <a href="{% url 'users:login' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-person-plus"></i> Portal Vendedores
+        </a>
     </div>
 </section>
 
 <!-- Filters -->
-<section class="container mb-4">
-    <div class="card">
-        <div class="card-body">
-            <form method="get" class="row g-3">
-                <div class="col-md-2">
-                    <select name="operation" class="form-select">
-                        <option value="">Operación</option>
-                        <option value="venta" {% if filters.operation == 'venta' %}selected{% endif %}>Venta</option>
-                        <option value="arriendo" {% if filters.operation == 'arriendo' %}selected{% endif %}>Arriendo</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select name="type" class="form-select">
-                        <option value="">Tipo</option>
-                        <option value="casa" {% if filters.type == 'casa' %}selected{% endif %}>Casa</option>
-                        <option value="apartamento" {% if filters.type == 'apartamento' %}selected{% endif %}>Apartamento</option>
-                        <option value="terreno" {% if filters.type == 'terreno' %}selected{% endif %}>Terreno</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select name="zone" class="form-select">
-                        <option value="">Zona</option>
-                        {% for zone in zones %}
-                        <option value="{{ zone.slug }}" {% if filters.zone == zone.slug %}selected{% endif %}>{{ zone.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <input type="number" name="min_price" class="form-control" placeholder="Precio mínimo" value="{{ filters.min_price }}">
-                </div>
-                <div class="col-md-2">
-                    <input type="number" name="max_price" class="form-control" placeholder="Precio máximo" value="{{ filters.max_price }}">
-                </div>
-                <div class="col-md-1">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
+<section class="filters">
+    <div class="container">
+        <form class="filter-form" method="get">
+            <div class="filter-group">
+                <label>Operación</label>
+                <select name="operation">
+                    <option value="">Todas</option>
+                    <option value="venta" {% if filters.operation == 'venta' %}selected{% endif %}>Venta</option>
+                    <option value="arriendo" {% if filters.operation == 'arriendo' %}selected{% endif %}>Arriendo</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Tipo</label>
+                <select name="type">
+                    <option value="">Todos</option>
+                    <option value="casa" {% if filters.type == 'casa' %}selected{% endif %}>Casa</option>
+                    <option value="apartamento" {% if filters.type == 'apartamento' %}selected{% endif %}>Apartamento</option>
+                    <option value="terreno" {% if filters.type == 'terreno' %}selected{% endif %}>Terreno</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Zona</label>
+                <select name="zone">
+                    <option value="">Todas</option>
+                    {% for zone in zones %}
+                    <option value="{{ zone.slug }}" {% if filters.zone == zone.slug %}selected{% endif %}>{{ zone.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Precio mín</label>
+                <input type="number" name="min_price" placeholder="0" value="{{ filters.min_price }}">
+            </div>
+            <div class="filter-group">
+                <label>Precio máx</label>
+                <input type="number" name="max_price" placeholder="999999999" value="{{ filters.max_price }}">
+            </div>
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+            </div>
+        </form>
     </div>
 </section>
 
 <!-- Zones Navigation -->
-<section class="container mb-4">
-    <h2 class="mb-3">Explorar por zona</h2>
-    <div class="row">
-        {% for zone in zones %}
-        <div class="col-md-4 mb-3">
-            <div class="card zone-header">
-                <div class="card-body">
-                    <h5 class="card-title">{{ zone.name }}</h5>
-                    <p class="card-text">
-                        {% for muni in zone.municipalities.all %}{% if muni.slug %}
-                        <a href="{% url 'properties:by_municipality' muni.slug %}" class="text-white text-decoration-none me-2">
-                            {{ muni.name }}
-                        </a>{% endif %}{% endfor %}
-                    </p>
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Explorar por zona</h2>
+        <div class="grid">
+            {% for zone in zones %}
+            <div class="zone-card">
+                <h5>{{ zone.name }}</h5>
+                <div class="zone-links">
+                    {% for muni in zone.municipalities.all %}{% if muni.slug %}
+                    <a href="{% url 'properties:by_municipality' muni.slug %}">{{ muni.name }}</a>
+                    {% endif %}{% endfor %}
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </section>
 
 <!-- Properties Grid -->
-<section class="container">
-    <h2 class="mb-3">Propiedades Recientes</h2>
-    {% if properties %}
-    <div class="row">
-        {% for property in properties %}
-        <div class="col-md-4 mb-4">
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Propiedades Recientes</h2>
+        {% if properties %}
+        <div class="grid">
+            {% for property in properties %}
             {% include 'partials/property_card.html' %}
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <div class="alert alert-info">
+            No hay propiedades disponibles. ¡Sé el primero en publicar!
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="alert alert-info">
-                        No hay propiedades disponibles. ¡Sé el primero en publicar!
-                    </div>
-    {% endif %}
 </section>
 {% endblock %}

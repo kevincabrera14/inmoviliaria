@@ -1,38 +1,36 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ municipality.name }} - Inmobiliaria Valle de Aburrá{% endblock %}
+{% block title %}{{ municipality.name }} - Inmobiliaria Medellín{% endblock %}
 
 {% block content %}
-<section class="container mt-4">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'properties:list' %}">Propiedades</a></li>
-            <li class="breadcrumb-item active">{{ municipality.name }}</li>
-        </ol>
-    </nav>
+<section class="section">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">Inicio</a>
+            <span>/</span>
+            <a href="{% url 'properties:list' %}">Propiedades</a>
+            <span>/</span>
+            <span>{{ municipality.name }}</span>
+        </nav>
 
-    <h1 class="mb-4">Propiedades en {{ municipality.name }}</h1>
+        <h1 class="section-title">Propiedades en {{ municipality.name }}</h1>
 
-    <!-- Municipality Info -->
-    <div class="alert alert-success mb-4">
-        <strong>{{ municipality.zone.name }}</strong> - {{ properties.count }} propiedades disponibles
-    </div>
-
-    <!-- Properties Grid -->
-    {% if properties %}
-    <div class="row">
-        {% for property in properties %}
-        <div class="col-md-4 mb-4">
-            {% include 'partials/property_card.html' %}
+        <div class="alert" style="background: var(--surface); border-radius: var(--radius); padding: 16px; margin-bottom: 24px;">
+            <strong>{{ municipality.zone.name }}</strong> — {{ properties.count }} propiedades disponibles
         </div>
-        {% endfor %}
+
+        {% if properties %}
+        <div class="grid">
+            {% for property in properties %}
+            {% include 'partials/property_card.html' %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            No hay propiedades en este municipio todavía.
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="alert alert-info">
-        No hay propiedades en este municipio todavía.
-                    </div>
-    {% endif %}
 </section>
 {% endblock %}

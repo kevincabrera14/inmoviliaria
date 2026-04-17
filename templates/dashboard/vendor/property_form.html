@@ -1,124 +1,153 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/base.html' %}
 
-{% block title %}{{ action }} Propiedad - Dashboard{% endblock %}
+{% block title %}{{ action }} Propiedad{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-section {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.form-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.form-row {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+@media (min-width: 576px) {
+    .form-row-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .form-row-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.image-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.image-preview img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<section class="container mt-4">
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'dashboard:property_list' %}">Propiedades</a></li>
-            <li class="breadcrumb-item active">{{ action }}</li>
-        </ol>
+<div class="container">
+    <nav class="breadcrumb">
+        <a href="{% url 'dashboard:dashboard' %}">Dashboard</a>
+        <span>/</span>
+        <a href="{% url 'dashboard:property_list' %}">Propiedades</a>
+        <span>/</span>
+        <span>{{ action }}</span>
     </nav>
 
-    <h1 class="mb-4">{{ action }} Propiedad</h1>
+    <h1 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 24px;">{{ action }} Propiedad</h1>
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5>Información Básica</h5>
+        <div class="form-section">
+            <h3>Información Básica</h3>
+            <div class="form-row form-row-2">
+                <div class="form-group">
+                    <label for="id_title">Título</label>
+                    {{ form.title }}
+                </div>
+                <div class="form-group">
+                    <label for="id_status">Estado</label>
+                    {{ form.status }}
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-8 mb-3">
-                        <label for="id_title" class="form-label">Título</label>
-                        {{ form.title }}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="id_status" class="form-label">Estado</label>
-                        {{ form.status }}
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="id_description" class="form-label">Descripción</label>
-                    {{ form.description }}
-                </div>
+            <div class="form-group">
+                <label for="id_description">Descripción</label>
+                {{ form.description }}
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5>Detalles</h5>
+        <div class="form-section">
+            <h3>Detalles</h3>
+            <div class="form-row form-row-4">
+                <div class="form-group">
+                    <label for="id_property_type">Tipo de Propiedad</label>
+                    {{ form.property_type }}
+                </div>
+                <div class="form-group">
+                    <label for="id_operation_type">Tipo de Operación</label>
+                    {{ form.operation_type }}
+                </div>
+                <div class="form-group">
+                    <label for="id_price">Precio</label>
+                    {{ form.price }}
+                </div>
+                <div class="form-group">
+                    <label for="id_municipality">Municipio</label>
+                    {{ form.municipality }}
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="id_property_type" class="form-label">Tipo de Propiedad</label>
-                        {{ form.property_type }}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="id_operation_type" class="form-label">Tipo de Operación</label>
-                        {{ form.operation_type }}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="id_price" class="form-label">Precio</label>
-                        {{ form.price }}
-                    </div>
+            <div class="form-row form-row-4">
+                <div class="form-group">
+                    <label for="id_area">Área (m²)</label>
+                    {{ form.area }}
                 </div>
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <label for="id_area" class="form-label">Área (m²)</label>
-                        {{ form.area }}
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label for="id_rooms" class="form-label">Habitaciones</label>
-                        {{ form.rooms }}
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label for="id_bathrooms" class="form-label">Baños</label>
-                        {{ form.bathrooms }}
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label for="id_municipality" class="form-label">Municipio</label>
-                        {{ form.municipality }}
-                    </div>
+                <div class="form-group">
+                    <label for="id_rooms">Habitaciones</label>
+                    {{ form.rooms }}
                 </div>
+                <div class="form-group">
+                    <label for="id_bathrooms">Baños</label>
+                    {{ form.bathrooms }}
+                </div>
+                <div class="form-group"></div>
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5>Ubicación</h5>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label for="id_address" class="form-label">Dirección</label>
-                    {{ form.address }}
-                </div>
+        <div class="form-section">
+            <h3>Ubicación</h3>
+            <div class="form-group">
+                <label for="id_address">Dirección</label>
+                {{ form.address }}
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5>Imágenes</h5>
+        <div class="form-section">
+            <h3>Imágenes</h3>
+            <div class="form-group">
+                <label for="id_images">Seleccionar imágenes</label>
+                <input type="file" name="images" multiple accept="image/*" style="padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); width: 100%;">
+                <small style="color: var(--text-muted); margin-top: 4px; display: block;">Puedes seleccionar múltiples imágenes</small>
             </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label for="id_images" class="form-label">Seleccionar imágenes</label>
-                    <input type="file" name="images" class="form-control" multiple accept="image/*">
-                    <small class="text-muted">Puedes seleccionar múltiples imágenes</small>
-                </div>
-                {% if property %}
-                <div class="row">
-                    {% for img in property.images.all %}
-                    <div class="col-md-3 mb-2">
-                        <img src="{{ img.image.url }}" class="img-thumbnail" alt="">
-                        {% if img.is_primary %}<span class="badge bg-success">Principal</span>{% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
+            {% if property %}
+            <div class="image-preview">
+                {% for img in property.images.all %}
+                <img src="{{ img.image.url }}" alt="">
+                {% endfor %}
             </div>
+            {% endif %}
         </div>
 
-        <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-success btn-lg">
-                <i class="bi bi-check-circle"></i> Guardar Propiedad
-            </button>
-        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+            <i class="bi bi-check-circle"></i> Guardar Propiedad
+        </button>
     </form>
-</section>
+</div>
 {% endblock %}
