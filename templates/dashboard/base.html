@@ -68,6 +68,25 @@
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+.dashboard-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.dashboard-actions .btn {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.4);
+    color: white;
+    font-size: 0.8rem;
+}
+
+.dashboard-actions .btn:hover {
+    background: rgba(255,255,255,0.3);
+    border-color: white;
+}
 </style>
 {% endblock %}
 
@@ -77,6 +96,17 @@
         <div class="dashboard-header">
             <h1>{% if user.is_admin %}Panel de Administración{% else %}Mi Panel{% endif %}</h1>
             <p>Bienvenido, {{ user.username }}</p>
+            <div class="dashboard-actions">
+                <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline btn-sm">
+                    <i class="bi bi-grid-1x2"></i> Panel
+                </a>
+                <a href="{% url 'users:profile' %}" class="btn btn-outline btn-sm">
+                    <i class="bi bi-person"></i> Editar Perfil
+                </a>
+                <a href="{% url 'users:logout' %}" class="btn btn-outline btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                </a>
+            </div>
         </div>
 
         {% if user.is_admin %}

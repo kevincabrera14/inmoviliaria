@@ -47,6 +47,20 @@ class Property(models.Model):
     rooms = models.PositiveIntegerField('Habitaciones', null=True, blank=True)
     bathrooms = models.PositiveIntegerField('Baños', null=True, blank=True)
     address = models.CharField('Dirección', max_length=300)
+    latitude = models.DecimalField(
+        'Latitud',
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True
+    )
+    longitude = models.DecimalField(
+        'Longitud',
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True
+    )
     municipality = models.ForeignKey(
         Municipality,
         on_delete=models.PROTECT,
