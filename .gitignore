@@ -54,4 +54,8 @@ Thumbs.db
 
 # Static files
 static/
-!
+staticfiles/
+
+# Asegurar que las migraciones NO se ignoren
+!**/migrations/
+!**/migrations/__init__.py
