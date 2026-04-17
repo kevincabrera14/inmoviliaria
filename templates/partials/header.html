@@ -18,9 +18,9 @@
                     <ul class="dropdown-menu">
                         {% for zone in zones %}
                         <li><h6 class="dropdown-header">{{ zone.name }}</h6></li>
-                        {% for muni in zone.municipalities.all %}
+                        {% for muni in zone.municipalities.all %}{% if muni.slug %}
                         <li><a class="dropdown-item" href="{% url 'properties:by_municipality' muni.slug %}">{{ muni.name }}</a></li>
-                        {% endfor %}
+                        {% endif %}{% endfor %}
                         {% endfor %}
                     </ul>
                 </li>

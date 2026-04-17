@@ -9,7 +9,11 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
             <li class="breadcrumb-item"><a href="{% url 'properties:list' %}">Propiedades</a></li>
+            {% if property.municipality.slug %}
             <li class="breadcrumb-item"><a href="{% url 'properties:by_municipality' property.municipality.slug %}">{{ property.municipality.name }}</a></li>
+            {% else %}
+            <li class="breadcrumb-item">{{ property.municipality.name }}</li>
+            {% endif %}
             <li class="breadcrumb-item active">{{ property.title|truncatechars:30 }}</li>
         </ol>
     </nav>

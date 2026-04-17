@@ -74,11 +74,10 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ zone.name }}</h5>
                     <p class="card-text">
-                        {% for muni in zone.municipalities.all %}
+                        {% for muni in zone.municipalities.all %}{% if muni.slug %}
                         <a href="{% url 'properties:by_municipality' muni.slug %}" class="text-white text-decoration-none me-2">
                             {{ muni.name }}
-                        </a>
-                        {% endfor %}
+                        </a>{% endif %}{% endfor %}
                     </p>
                 </div>
             </div>
