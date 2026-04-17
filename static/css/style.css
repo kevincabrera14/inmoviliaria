@@ -96,6 +96,11 @@ a:hover {
     font-size: 1.4rem;
 }
 
+.logo-img {
+    height: 36px;
+    width: auto;
+}
+
 .menu-toggle {
     display: flex;
     flex-direction: column;
