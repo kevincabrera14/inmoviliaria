@@ -127,6 +127,13 @@
                 <label for="id_address">Dirección</label>
                 {{ form.address }}
             </div>
+            <div class="form-group">
+                <label for="id_maps_url">Ubicación en Google Maps</label>
+                {{ form.maps_url }}
+                <small style="color: var(--text-muted); margin-top: 4px; display: block;">
+                    Pega la URL de Google Maps o coordenadas (lat, lng) para ubicar la propiedad en el mapa interactivo.
+                </small>
+            </div>
         </div>
 
         <div class="form-section">
