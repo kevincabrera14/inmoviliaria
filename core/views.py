@@ -84,9 +84,12 @@ def dashboard(request):
             'total_properties': Property.objects.count(),
             'total_vendors': User.objects.filter(role='vendedor').count(),
             'total_users': User.objects.count(),
+            'published_properties': Property.objects.filter(status='published').count(),
         }
     else:
+        my_props = Property.objects.filter(published_by=request.user)
         context = {
-            'my_properties': Property.objects.filter(published_by=request.user).count(),
+            'my_properties': my_props.count(),
+            'published_count': my_props.filter(status='published').count(),
         }
     return render(request, 'dashboard/base.html', context)

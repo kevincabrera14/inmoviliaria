@@ -1,0 +1,195 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-page {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.profile-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 32px;
+    text-align: center;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 2rem;
+}
+
+.profile-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.profile-header p {
+    margin: 4px 0 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+
+.profile-body {
+    padding: 24px;
+}
+
+.info-group {
+    margin-bottom: 20px;
+}
+
+.info-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.info-group .value {
+    font-size: 1rem;
+    color: var(--text);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 480px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.profile-actions .btn {
+    flex: 1;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumb">
+        <a href="{% url 'dashboard:dashboard' %}">Dashboard</a>
+        <span>/</span>
+        <span>Mi Perfil</span>
+    </nav>
+
+    <div class="profile-page">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <h2>{{ user.get_full_name|default:user.username }}</h2>
+                <p>{{ user.get_role_display }}</p>
+            </div>
+
+            <div class="profile-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="info-grid">
+                        <div class="form-group">
+                            <label for="id_username">Usuario</label>
+                            <input type="text" id="id_username" value="{{ user.username }}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_email">Email</label>
+                            <input type="email" id="id_email" value="{{ user.email }}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="form-group">
+                            <label for="id_first_name">Nombre</label>
+                            <input type="text" name="first_name" id="id_first_name" value="{{ user.first_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_last_name">Apellido</label>
+                            <input type="text" name="last_name" id="id_last_name" value="{{ user.last_name }}">
+                        </div>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="form-group">
+                            <label for="id_cedula">Cédula</label>
+                            <input type="text" name="cedula" id="id_cedula" value="{{ user.cedula|default:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_telefono">Teléfono / WhatsApp</label>
+                            <input type="text" name="telefono" id="id_telefono" value="{{ user.telefono|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <a href="{% url 'dashboard:dashboard' %}" class="btn btn-outline">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check"></i> Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

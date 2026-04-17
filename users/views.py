@@ -33,5 +33,12 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     if request.method == 'POST':
-        pass
+        user = request.user
+        user.first_name = request.POST.get('first_name', '')
+        user.last_name = request.POST.get('last_name', '')
+        user.cedula = request.POST.get('cedula', '')
+        user.telefono = request.POST.get('telefono', '')
+        user.save()
+        messages.success(request, 'Perfil actualizado correctamente.')
+        return redirect('users:profile')
     return render(request, 'users/profile.html')
