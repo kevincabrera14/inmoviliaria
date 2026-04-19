@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 
 from properties.models import Property, PropertyImage
-from properties.forms import PropertyForm, PropertyImageForm, parse_google_maps_url
+from properties.forms import PropertyForm, PropertyImageForm
 
 
 @login_required
@@ -20,35 +20,14 @@ def vendor_property_list(request):
     })
 
 
-def _save_property_form(form, request, property_obj=None):
-    """Helper para guardar el formulario con coordenadas del mapa."""
-    maps_url = form.cleaned_data.get('maps_url', '')
-    latitude = None
-    longitude = None
-
-    if maps_url:
-        latitude, longitude = parse_google_maps_url(maps_url)
-
-    if property_obj:
-        property_obj.latitude = latitude
-        property_obj.longitude = longitude
-        property_obj.save()
-    else:
-        return latitude, longitude
-
-
 @login_required
 def vendor_property_create(request):
     """Crear propiedad."""
     if request.method == 'POST':
         form = PropertyForm(request.POST, request.FILES)
         if form.is_valid():
-            latitude, longitude = _save_property_form(form, request)
-
             property_obj = form.save(commit=False)
             property_obj.published_by = request.user
-            property_obj.latitude = latitude
-            property_obj.longitude = longitude
             property_obj.save()
 
             # Manejar imágenes múltiples
@@ -85,8 +64,6 @@ def vendor_property_edit(request, pk):
     if request.method == 'POST':
         form = PropertyForm(request.POST, request.FILES, instance=property_obj)
         if form.is_valid():
-            latitude, longitude = _save_property_form(form, request, property_obj)
-
             form.save()
 
             # Agregar nuevas imágenes

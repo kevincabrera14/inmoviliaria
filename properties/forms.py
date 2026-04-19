@@ -90,6 +90,19 @@ class PropertyForm(forms.ModelForm):
             self.cleaned_data['longitude'] = lng
         return url
 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        # Guardar coordenadas si fueron proporcionadas
+        if 'latitude' in self.cleaned_data:
+            instance.latitude = self.cleaned_data['latitude']
+        if 'longitude' in self.cleaned_data:
+            instance.longitude = self.cleaned_data['longitude']
+
+        if commit:
+            instance.save()
+        return instance
+
 
 class PropertyImageForm(forms.ModelForm):
     """Formulario para subir imágenes."""
