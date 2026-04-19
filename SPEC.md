@@ -61,12 +61,15 @@ core/
 - `is_active`: boolean
 
 ### Zone
-- `name`: string (Aburrá Norte, Centro, Sur)
+- `name`: string (Zona Norte, Zona Centro, Zona Sur)
 - `slug`: slug único
 - `order`: int para ordenamiento
 
 ### Municipality
-- `name`: string (Medellín, Bello, Envigado, etc.)
+- `name`: string (10 municipios del Valle de Aburrá)
+- **Zona Norte**: Barbosa, Girardota, Copacabana, Bello
+- **Zona Centro**: Medellín
+- **Zona Sur**: Envigado, Itagüí, Sabaneta, La Estrella, Caldas
 - `zone`: ForeignKey a Zone
 - `slug`: string único para URL
 - `order`: int para ordenamiento
