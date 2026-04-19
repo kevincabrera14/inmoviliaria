@@ -7,7 +7,6 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('mapa/', views.map_view, name='map'),
     path('users/', include('users.urls')),
     path('adminapp/', admin.site.urls),
     path('propiedades/', include('properties.urls')),
