@@ -262,16 +262,25 @@ a:hover {
 }
 
 /* ==================== CARDS ==================== */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+
 .card {
     background: white;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
     overflow: hidden;
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    height: 100%;
 }
 
-.card:hover {
+.card-link:hover .card {
     box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
 }
 
 .card-image {
