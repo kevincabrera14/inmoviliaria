@@ -1,28 +1,192 @@
-<a href="{% url 'properties:detail' property.pk %}" class="card-link">
-<article class="card">
-    {% if property.images.first %}
-    <div class="card-image">
-        <img src="{{ property.images.first.image.url }}" alt="{{ property.title }}">
-        {% if property.status == 'published' %}
-        <span class="card-badge">{{ property.get_operation_type_display }}</span>
-        {% endif %}
-    </div>
-    {% else %}
-    <div class="card-image" style="background: var(--surface); display: flex; align-items: center; justify-content: center;">
-        <i class="bi bi-image" style="font-size: 3rem; color: var(--text-muted);"></i>
-    </div>
-    {% endif %}
-    <div class="card-body">
-        <h3 class="card-title">{{ property.title }}</h3>
-        <p class="card-price">
-            ${{ property.price|floatformat:0 }}
-            <span>/{{ property.get_operation_type_display }}</span>
-        </p>
-        <div class="card-meta">
-            <span><i class="bi bi-geo-alt"></i> {{ property.municipality.name }}</span>
-            {% if property.area %}<span><i class="bi bi-rulers"></i> {{ property.area }} m²</span>{% endif %}
-            {% if property.rooms %}<span><i class="bi bi-door-open"></i> {{ property.rooms }} hab.</span>{% endif %}
+<a href="{% url 'properties:detail' property.pk %}" class="ix-property-card" aria-label="Ver propiedad: {{ property.title }}">
+    <article class="ix-property-card__inner">
+        {% if property.images.first %}
+        <div class="ix-property-card__image">
+            <img
+                src="{{ property.images.first.image.url }}"
+                alt="{{ property.title }}"
+                loading="lazy"
+            >
+            {% if property.status == 'published' %}
+            <span class="ix-property-card__badge">
+                <i class="bi bi-tag-fill"></i> {{ property.get_operation_type_display }}
+            </span>
+            {% endif %}
         </div>
-    </div>
-</article>
+        {% else %}
+        <div class="ix-property-card__image ix-property-card__image--empty">
+            <i class="bi bi-image"></i>
+        </div>
+        {% endif %}
+
+        <div class="ix-property-card__body">
+            <h3 class="ix-property-card__title">{{ property.title }}</h3>
+
+            <div class="ix-property-card__price">
+                <span class="ix-property-card__price-value">
+                    ${{ property.price|floatformat:0 }}
+                </span>
+                <span class="ix-property-card__price-type">
+                    / {{ property.get_operation_type_display }}
+                </span>
+            </div>
+
+            <div class="ix-property-card__meta">
+                <span class="ix-property-card__meta-item">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    {{ property.municipality.name }}
+                </span>
+                {% if property.area %}
+                <span class="ix-property-card__meta-item">
+                    <i class="bi bi-rulers"></i>
+                    {{ property.area }} m²
+                </span>
+                {% endif %}
+                {% if property.rooms %}
+                <span class="ix-property-card__meta-item">
+                    <i class="bi bi-door-open"></i>
+                    {{ property.rooms }} hab.
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </article>
 </a>
+
+<style>
+.ix-property-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    border-radius: var(--ix-radius-lg);
+    overflow: hidden;
+    background: white;
+    box-shadow: var(--ix-shadow-sm);
+    transition: transform 0.3s var(--ix-ease), box-shadow 0.3s var(--ix-ease);
+}
+
+.ix-property-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--ix-shadow-lg);
+}
+
+.ix-property-card:focus {
+    outline: 3px solid var(--ix-gold);
+    outline-offset: 2px;
+}
+
+.ix-property-card__inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.ix-property-card__image {
+    position: relative;
+    aspect-ratio: 16/11;
+    overflow: hidden;
+    background: var(--ix-surface);
+}
+
+.ix-property-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--ix-ease);
+}
+
+.ix-property-card:hover .ix-property-card__image img {
+    transform: scale(1.05);
+}
+
+.ix-property-card__image--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ix-property-card__image--empty i {
+    font-size: 3rem;
+    color: var(--ix-muted);
+}
+
+.ix-property-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    background: var(--ix-deep);
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.ix-property-card__badge i {
+    font-size: 0.75rem;
+}
+
+.ix-property-card__body {
+    padding: 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ix-property-card__title {
+    font-family: var(--ix-font-b);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ix-text);
+    margin: 0 0 10px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.ix-property-card__price {
+    margin-bottom: 14px;
+}
+
+.ix-property-card__price-value {
+    font-family: var(--ix-font-b);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--ix-gold);
+}
+
+.ix-property-card__price-type {
+    font-size: 0.82rem;
+    color: var(--ix-muted);
+}
+
+.ix-property-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--ix-border);
+}
+
+.ix-property-card__meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--ix-muted);
+}
+
+.ix-property-card__meta-item i {
+    color: var(--ix-gold);
+    font-size: 0.9rem;
+}
+</style>

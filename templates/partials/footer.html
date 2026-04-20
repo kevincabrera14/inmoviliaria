@@ -1,25 +1,155 @@
-<footer class="footer">
+<footer class="ix-footer" role="contentinfo">
     <div class="container">
-        <div class="footer-grid">
-            <div>
-                <h4>Inmobiliaria Medellín</h4>
-                <p>Tu socio de confianza en el mercado inmobiliario de Medellín y el Valle de Aburrá.</p>
+        <div class="ix-footer__grid">
+            <div class="ix-footer__brand">
+                <div class="ix-footer__logo">
+                    <img src="{% static 'img/logo.png' %}" alt="Inmobiliaria Medellín">
+                </div>
+                <p class="ix-footer__desc">
+                    Tu socio de confianza en el mercado inmobiliario de Medellín y el Valle de Aburrá.
+                </p>
+                <div class="ix-footer__social">
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                </div>
             </div>
-            <div>
-                <h4>Contacto</h4>
-                <p><i class="bi bi-geo-alt"></i> Medellín, Antioquia</p>
-                <p><i class="bi bi-telephone"></i> +57 300 123 4567</p>
-                <p><i class="bi bi-envelope"></i> info@inmobiliariamedellin.com</p>
+
+            <div class="ix-footer__links">
+                <h4 class="ix-footer__title">Enlaces</h4>
+                <ul>
+                    <li><a href="{% url 'home' %}">Inicio</a></li>
+                    <li><a href="{% url 'properties:list' %}">Propiedades</a></li>
+                    <li><a href="{% url 'users:login' %}">Portal Vendedores</a></li>
+                </ul>
             </div>
-            <div>
-                <h4>Enlaces</h4>
-                <p><a href="{% url 'home' %}">Inicio</a></p>
-                <p><a href="{% url 'properties:list' %}">Propiedades</a></p>
-                <p><a href="{% url 'users:login' %}">Portal Vendedores</a></p>
+
+            <div class="ix-footer__contact">
+                <h4 class="ix-footer__title">Contacto</h4>
+                <ul>
+                    <li><i class="bi bi-geo-alt-fill"></i> Medellín, Antioquia</li>
+                    <li><i class="bi bi-telephone-fill"></i> +57 300 123 4567</li>
+                    <li><i class="bi bi-envelope-fill"></i> info@inmobiliariamedellin.com</li>
+                </ul>
             </div>
         </div>
-        <div class="footer-bottom">
+
+        <div class="ix-footer__bottom">
             <p>&copy; 2026 Inmobiliaria Medellín. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>
+
+<style>
+.ix-footer {
+    background: var(--ix-deep);
+    color: rgba(255,255,255,0.75);
+    padding: 64px 0 24px;
+    font-family: var(--ix-font-b);
+}
+
+.ix-footer__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    margin-bottom: 48px;
+}
+
+.ix-footer__logo img {
+    height: 48px;
+    margin-bottom: 16px;
+}
+
+.ix-footer__desc {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin: 0 0 20px;
+    color: rgba(255,255,255,0.6);
+}
+
+.ix-footer__social {
+    display: flex;
+    gap: 12px;
+}
+
+.ix-footer__social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    color: var(--ix-gold);
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.ix-footer__social a:hover {
+    background: var(--ix-gold);
+    color: var(--ix-deep);
+    transform: translateY(-3px);
+}
+
+.ix-footer__title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ix-gold);
+    margin: 0 0 16px;
+}
+
+.ix-footer__links ul,
+.ix-footer__contact ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ix-footer__links li,
+.ix-footer__contact li {
+    margin-bottom: 10px;
+}
+
+.ix-footer__links a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.ix-footer__links a:hover {
+    color: var(--ix-gold);
+}
+
+.ix-footer__contact li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+
+.ix-footer__contact i {
+    color: var(--ix-gold);
+    font-size: 1rem;
+}
+
+.ix-footer__bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 24px;
+    text-align: center;
+}
+
+.ix-footer__bottom p {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.45);
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .ix-footer__grid {
+        grid-template-columns: 2fr 1fr 1fr;
+    }
+}
+</style>

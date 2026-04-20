@@ -1,102 +1,302 @@
 {% load static %}
-<header class="header">
-    <div class="container">
-        <div class="header-inner">
-            <a href="{% url 'home' %}" class="logo">
-                <img src="{% static 'img/logo.png' %}" alt="Inmobiliaria Medellín" class="logo-img">
-                <span>Inmobiliaria Medellín</span>
-            </a>
-            <button class="menu-toggle" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <nav class="nav" id="mainNav">
-                <ul class="nav-list">
-                    <li><a href="{% url 'properties:list' %}" class="nav-link">Propiedades</a></li>
-                    <li class="nav-dropdown-wrapper">
-                        <a href="#" class="nav-link" onclick="toggleDropdown(event)">Zonas <i class="bi bi-chevron-down"></i></a>
-                        <ul class="nav-dropdown">
-                            {% for zone in zones %}
-                            <li>
-                                <span class="nav-dropdown-title">{{ zone.name }}</span>
-                                {% for muni in zone.municipalities.all %}{% if muni.slug %}
-                                <a href="{% url 'properties:by_municipality' muni.slug %}">{{ muni.name }}</a>
-                                {% endif %}{% endfor %}
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+<header class="ix-header" role="banner">
+    <div class="container ix-header__inner">
+        <a href="{% url 'home' %}" class="ix-logo" aria-label="Inmobiliaria Medellín - Inicio">
+            <img src="{% static 'img/logo.png' %}" alt="Logo" class="ix-logo__img">
+            <span class="ix-logo__text">Inmobiliaria<span class="ix-logo__em"> Medellín</span></span>
+        </a>
+
+        <button
+            class="ix-menu-toggle"
+            onclick="toggleMenu()"
+            aria-label="Abrir menú de navegación"
+            aria-expanded="false"
+            aria-controls="mainNav"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="ix-nav" id="mainNav" role="navigation" aria-label="Menú principal">
+            <ul class="ix-nav__list">
+                <li>
+                    <a href="{% url 'properties:list' %}" class="ix-nav__link">
+                        <i class="bi bi-buildings"></i> Propiedades
+                    </a>
+                </li>
+                <li class="ix-nav__dropdown">
+                    <button
+                        class="ix-nav__link ix-nav__link--dropdown"
+                        onclick="toggleDropdown(event)"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                    >
+                        <i class="bi bi-geo-alt-fill"></i> Zonas <i class="bi bi-chevron-down ix-nav__chevron"></i>
+                    </button>
+                    <div class="ix-nav__dropdown-panel" role="menu">
+                        {% for zone in zones %}
+                        <div class="ix-nav__dropdown-group">
+                            <span class="ix-nav__dropdown-title">{{ zone.name }}</span>
+                            {% for muni in zone.municipalities.all %}{% if muni.slug %}
+                            <a
+                                href="{% url 'properties:by_municipality' muni.slug %}"
+                                class="ix-nav__dropdown-item"
+                                role="menuitem"
+                            >{{ muni.name }}</a>
+                            {% endif %}{% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </li>
+            </ul>
+        </nav>
     </div>
 </header>
 
 <script>
 function toggleMenu() {
-    document.getElementById('mainNav').classList.toggle('active');
+    const nav = document.getElementById('mainNav');
+    const toggle = document.querySelector('.ix-menu-toggle');
+    nav.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', nav.classList.contains('is-open'));
 }
 
 function toggleDropdown(e) {
     e.preventDefault();
-    const dropdown = e.target.closest('.nav-dropdown-wrapper').querySelector('.nav-dropdown');
-    dropdown.classList.toggle('active');
+    const btn = e.target.closest('.ix-nav__link--dropdown');
+    const panel = btn.nextElementSibling;
+    const isOpen = panel.classList.toggle('is-open');
+    btn.setAttribute('aria-expanded', isOpen);
 }
 </script>
 
 <style>
-.nav-dropdown-wrapper {
+/* Header */
+.ix-header {
+    background: var(--ix-deep);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.ix-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 68px;
+}
+
+/* Logo */
+.ix-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.ix-logo__img {
+    height: 40px;
+    width: auto;
+}
+
+.ix-logo__text {
+    font-family: var(--ix-font-b);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.ix-logo__em {
+    color: var(--ix-gold);
+}
+
+/* Menu Toggle */
+.ix-menu-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px;
+    transition: background 0.2s;
+}
+
+.ix-menu-toggle:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.ix-menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+}
+
+/* Nav */
+.ix-nav {
+    display: none;
+}
+
+.ix-nav.is-open {
+    display: block;
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    background: var(--ix-navy);
+    padding: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.ix-nav__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ix-nav__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+}
+
+.ix-nav__link i {
+    color: var(--ix-gold);
+    font-size: 1.05rem;
+}
+
+.ix-nav__link:hover,
+.ix-nav__link:focus {
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.ix-nav__link--dropdown {
+    justify-content: flex-start;
+}
+
+.ix-nav__chevron {
+    margin-left: auto;
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+}
+
+.ix-nav__link[aria-expanded="true"] .ix-nav__chevron {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Panel */
+.ix-nav__dropdown {
     position: relative;
 }
 
-.nav-dropdown {
+.ix-nav__dropdown-panel {
     display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: var(--primary-light);
-    min-width: 200px;
-    padding: 8px 0;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-md);
-    z-index: 1000;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    padding: 12px;
+    margin-top: 8px;
+    min-width: 220px;
 }
 
-.nav-dropdown.active {
+.ix-nav__dropdown-panel.is-open {
     display: block;
 }
 
-.nav-dropdown li {
-    padding: 0;
+.ix-nav__dropdown-group {
+    padding: 4px 0;
 }
 
-.nav-dropdown-title {
+.ix-nav__dropdown-title {
     display: block;
-    padding: 8px 16px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 700;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.6);
-    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--ix-gold);
+    padding: 8px 12px 4px;
 }
 
-.nav-dropdown a {
+.ix-nav__dropdown-item {
     display: block;
-    padding: 8px 16px;
-    color: white;
+    padding: 10px 12px;
+    color: var(--ix-text);
+    text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
 }
 
-.nav-dropdown a:hover {
-    background: rgba(255,255,255,0.1);
+.ix-nav__dropdown-item:hover {
+    background: var(--ix-surface);
+    color: var(--ix-navy);
 }
 
-@media (min-width: 576px) {
-    .nav-dropdown-wrapper:hover .nav-dropdown {
+/* Desktop */
+@media (min-width: 768px) {
+    .ix-menu-toggle {
+        display: none;
+    }
+
+    .ix-nav {
         display: block;
     }
-    .nav-dropdown-title {
-        pointer-events: none;
+
+    .ix-nav.is-open {
+        display: flex;
+        position: static;
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+    }
+
+    .ix-nav__list {
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .ix-nav__link {
+        width: auto;
+        padding: 10px 16px;
+    }
+
+    .ix-nav__dropdown:hover .ix-nav__dropdown-panel {
+        display: block;
+    }
+
+    .ix-nav__dropdown-panel {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
     }
 }
 </style>

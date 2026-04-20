@@ -3,10 +3,11 @@
 {% block title %}{{ property.title }} - Inmobiliaria Medellín{% endblock %}
 
 {% block content %}
-<section class="section">
+<section class="ix-section">
     <div class="container">
+
         <!-- Breadcrumb -->
-        <nav class="breadcrumb">
+        <nav class="breadcrumb" aria-label="Navegación">
             <a href="{% url 'home' %}">Inicio</a>
             <span>/</span>
             <a href="{% url 'properties:list' %}">Propiedades</a>
@@ -20,113 +21,427 @@
             <span>{{ property.title|truncatechars:30 }}</span>
         </nav>
 
-        <div style="display: grid; gap: 24px;">
-            <!-- Images -->
-            <div class="card">
+        <div class="ix-detail-grid">
+
+            <!-- Image Gallery -->
+            <div class="ix-detail-images">
                 {% if images %}
-                <img src="{{ images.0.image.url }}" alt="{{ property.title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
+                <div class="ix-detail-main-image">
+                    <img src="{{ images.0.image.url }}" alt="{{ property.title }}">
+                </div>
                 {% if images.count > 1 %}
-                <div style="display: flex; gap: 8px; padding: 16px; overflow-x: auto;">
+                <div class="ix-detail-thumbs">
                     {% for img in images|slice:"1:" %}
-                    <img src="{{ img.image.url }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius);">
+                    <img src="{{ img.image.url }}" alt="Imagen {{ forloop.counter }}">
                     {% endfor %}
                 </div>
                 {% endif %}
                 {% else %}
-                <div style="height: 300px; display: flex; align-items: center; justify-content: center; background: var(--surface);">
-                    <i class="bi bi-image" style="font-size: 4rem; color: var(--text-muted);"></i>
+                <div class="ix-detail-main-image ix-detail-main-image--empty">
+                    <i class="bi bi-image"></i>
                 </div>
                 {% endif %}
             </div>
 
-            <!-- Details -->
-            <div class="card">
-                <div class="card-body">
-                    <h1 class="card-title" style="font-size: 1.5rem; margin-bottom: 8px;">{{ property.title }}</h1>
-                    <p class="card-price">
-                        ${{ property.price|floatformat:0 }}
-                        <span>/{{ property.get_operation_type_display }}</span>
-                    </p>
-
-                    <div class="property-info">
-                        <div class="property-info-item">
-                            <i class="bi bi-geo-alt"></i>
-                            <span>{{ property.municipality.name }}</span>
-                        </div>
-                        <div class="property-info-item">
-                            <i class="bi bi-house"></i>
-                            <span>{{ property.get_property_type_display }}</span>
-                        </div>
-                        {% if property.area %}
-                        <div class="property-info-item">
-                            <i class="bi bi-rulers"></i>
-                            <span>{{ property.area }} m²</span>
-                        </div>
-                        {% endif %}
-                        {% if property.rooms %}
-                        <div class="property-info-item">
-                            <i class="bi bi-door-open"></i>
-                            <span>{{ property.rooms }} habitaciones</span>
-                        </div>
-                        {% endif %}
-                        {% if property.bathrooms %}
-                        <div class="property-info-item">
-                            <i class="bi bi-droplet"></i>
-                            <span>{{ property.bathrooms }} baños</span>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="property-description">
-                        <h5>Descripción</h5>
-                        <p>{{ property.description|linebreaks }}</p>
-
-                        <h5>Dirección</h5>
-                        <p>{{ property.address }}</p>
-
-                        {% if property.features %}
-                        <h5>Características adicionales</h5>
-                        <ul>
-                            {% for key, value in property.features.items %}
-                            <li>{{ key|title }}: {{ value }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
+            <!-- Main Info -->
+            <div class="ix-detail-info">
+                <div class="ix-detail-header">
+                    <span class="ix-detail-zone">{{ property.municipality.zone.name }}</span>
+                    <h1 class="ix-detail-title">{{ property.title }}</h1>
+                    <div class="ix-detail-price">
+                        <span class="ix-detail-price-value">${{ property.price|floatformat:0 }}</span>
+                        <span class="ix-detail-price-type">/ {{ property.get_operation_type_display }}</span>
                     </div>
                 </div>
+
+                <div class="ix-detail-specs" role="list" aria-label="Especificaciones">
+                    <div class="ix-detail-spec" role="listitem">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>{{ property.municipality.name }}</span>
+                    </div>
+                    <div class="ix-detail-spec" role="listitem">
+                        <i class="bi bi-house-fill"></i>
+                        <span>{{ property.get_property_type_display }}</span>
+                    </div>
+                    {% if property.area %}
+                    <div class="ix-detail-spec" role="listitem">
+                        <i class="bi bi-rulers"></i>
+                        <span>{{ property.area }} m²</span>
+                    </div>
+                    {% endif %}
+                    {% if property.rooms %}
+                    <div class="ix-detail-spec" role="listitem">
+                        <i class="bi bi-door-open"></i>
+                        <span>{{ property.rooms }} habitaciones</span>
+                    </div>
+                    {% endif %}
+                    {% if property.bathrooms %}
+                    <div class="ix-detail-spec" role="listitem">
+                        <i class="bi bi-droplet-fill"></i>
+                        <span>{{ property.bathrooms }} baños</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="ix-detail-description">
+                    <h2 class="ix-detail-section-title">Descripción</h2>
+                    <p>{{ property.description|linebreaks }}</p>
+                </div>
+
+                <div class="ix-detail-address">
+                    <h2 class="ix-detail-section-title">Dirección</h2>
+                    <p><i class="bi bi-signpost-fill"></i> {{ property.address }}</p>
+                </div>
+
+                {% if property.features %}
+                <div class="ix-detail-features">
+                    <h2 class="ix-detail-section-title">Características adicionales</h2>
+                    <ul class="ix-detail-features-list">
+                        {% for key, value in property.features.items %}
+                        <li><i class="bi bi-check-circle-fill"></i> {{ key|title }}: {{ value }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
 
-            <!-- Contact -->
-            <div class="contact-card">
-                <h5>Contactar al vendedor</h5>
-                {% if property.published_by %}
-                <p><i class="bi bi-person"></i> {{ property.published_by.get_full_name|default:property.published_by.username }}</p>
-                {% if property.published_by.telefono %}
-                <p><i class="bi bi-telephone"></i> {{ property.published_by.telefono }}</p>
-                {% endif %}
-                {% endif %}
-                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 16px;">
-                    <a href="https://wa.me/{{ whatsapp_number }}?text=Hola, me interesa la propiedad: {{ property.title }}" target="_blank" class="btn btn-primary">
-                        <i class="bi bi-whatsapp"></i> WhatsApp
-                    </a>
-                    <a href="mailto:?subject=Interés en {{ property.title }}" class="btn btn-outline">
-                        <i class="bi bi-envelope"></i> Email
-                    </a>
+            <!-- Contact Card -->
+            <div class="ix-detail-contact">
+                <div class="ix-contact-card">
+                    <h3 class="ix-contact-title">Contactar al vendedor</h3>
+                    {% if property.published_by %}
+                    <div class="ix-contact-vendor">
+                        <div class="ix-contact-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <div>
+                            <p class="ix-contact-name">{{ property.published_by.get_full_name|default:property.published_by.username }}</p>
+                            {% if property.published_by.telefono %}
+                            <p class="ix-contact-phone">
+                                <i class="bi bi-telephone-fill"></i> {{ property.published_by.telefono }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="ix-contact-actions">
+                        <a
+                            href="https://wa.me/{{ whatsapp_number }}?text=Hola, me interesa la propiedad: {{ property.title|urlencode }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="ix-btn ix-btn--gold ix-btn--block"
+                        >
+                            <i class="bi bi-whatsapp"></i> WhatsApp
+                        </a>
+                        <a
+                            href="mailto:?subject=Interés en {{ property.title|urlencode }}"
+                            class="ix-btn ix-btn--outline ix-btn--block"
+                        >
+                            <i class="bi bi-envelope-fill"></i> Email
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- Related Properties -->
-            {% if related %}
-            <div>
-                <h2 class="section-title">Propiedades relacionadas</h2>
-                <div class="grid">
-                    {% for rel in related %}
-                    {% include 'partials/property_card.html' %}
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
         </div>
+
+        <!-- Related Properties -->
+        {% if related %}
+        <div class="ix-detail-related">
+            <h2 class="ix-section__title">Propiedades relacionadas</h2>
+            <div class="grid">
+                {% for rel in related %}
+                {% include 'partials/property_card.html' %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 </section>
+
+<style>
+.ix-detail-grid {
+    display: grid;
+    gap: 24px;
+}
+
+@media (min-width: 992px) {
+    .ix-detail-grid {
+        grid-template-columns: 1fr 380px;
+        grid-template-rows: auto auto;
+    }
+    .ix-detail-images {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .ix-detail-info {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    .ix-detail-contact {
+        grid-column: 2;
+        grid-row: 1 / 3;
+    }
+}
+
+/* Images */
+.ix-detail-main-image {
+    border-radius: var(--ix-radius-lg);
+    overflow: hidden;
+    background: var(--ix-surface);
+    aspect-ratio: 16/10;
+}
+
+.ix-detail-main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ix-detail-main-image--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ix-detail-main-image--empty i {
+    font-size: 4rem;
+    color: var(--ix-muted);
+}
+
+.ix-detail-thumbs {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.ix-detail-thumbs img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--ix-radius);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.ix-detail-thumbs img:hover {
+    opacity: 0.8;
+}
+
+/* Info */
+.ix-detail-header {
+    margin-bottom: 24px;
+}
+
+.ix-detail-zone {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ix-gold);
+    margin-bottom: 8px;
+}
+
+.ix-detail-title {
+    font-family: var(--ix-font-h);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+    color: var(--ix-text);
+    margin: 0 0 12px;
+    line-height: 1.3;
+}
+
+.ix-detail-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.ix-detail-price-value {
+    font-family: var(--ix-font-b);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--ix-gold);
+}
+
+.ix-detail-price-type {
+    font-size: 0.9rem;
+    color: var(--ix-muted);
+}
+
+/* Specs */
+.ix-detail-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px 0;
+    border-top: 1px solid var(--ix-border);
+    border-bottom: 1px solid var(--ix-border);
+    margin-bottom: 24px;
+}
+
+.ix-detail-spec {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--ix-surface);
+    border-radius: var(--ix-radius);
+    font-size: 0.9rem;
+    color: var(--ix-text);
+}
+
+.ix-detail-spec i {
+    color: var(--ix-gold);
+    font-size: 1.1rem;
+}
+
+/* Description */
+.ix-detail-section-title {
+    font-family: var(--ix-font-b);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ix-muted);
+    margin: 0 0 12px;
+}
+
+.ix-detail-description p,
+.ix-detail-address p {
+    color: var(--ix-text);
+    line-height: 1.8;
+    margin: 0;
+}
+
+.ix-detail-description {
+    margin-bottom: 24px;
+}
+
+.ix-detail-address {
+    margin-bottom: 24px;
+}
+
+.ix-detail-address p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ix-detail-address i {
+    color: var(--ix-gold);
+}
+
+/* Features */
+.ix-detail-features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.ix-detail-features-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--ix-text);
+}
+
+.ix-detail-features-list i {
+    color: var(--ix-gold);
+    font-size: 1rem;
+}
+
+/* Contact Card */
+.ix-contact-card {
+    background: white;
+    border-radius: var(--ix-radius-lg);
+    box-shadow: var(--ix-shadow-md);
+    padding: 28px;
+    position: sticky;
+    top: 88px;
+}
+
+.ix-contact-title {
+    font-family: var(--ix-font-h);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ix-text);
+    margin: 0 0 20px;
+    text-align: center;
+}
+
+.ix-contact-vendor {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: var(--ix-surface);
+    border-radius: var(--ix-radius);
+    margin-bottom: 20px;
+}
+
+.ix-contact-avatar {
+    width: 48px;
+    height: 48px;
+    background: var(--ix-deep);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ix-contact-avatar i {
+    color: var(--ix-gold);
+    font-size: 1.4rem;
+}
+
+.ix-contact-name {
+    font-weight: 600;
+    color: var(--ix-text);
+    margin: 0 0 4px;
+}
+
+.ix-contact-phone {
+    font-size: 0.85rem;
+    color: var(--ix-muted);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ix-contact-phone i {
+    color: var(--ix-gold);
+}
+
+.ix-contact-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Related */
+.ix-detail-related {
+    margin-top: 48px;
+    padding-top: 48px;
+    border-top: 1px solid var(--ix-border);
+}
+
+.ix-section__title {
+    font-family: var(--ix-font-h);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ix-text);
+    margin: 0 0 24px;
+}
+</style>
 {% endblock %}

@@ -6,7 +6,7 @@
 <section class="section">
     <div class="container">
         <!-- Breadcrumb -->
-        <nav class="breadcrumb">
+        <nav class="breadcrumb" aria-label="Navegación">
             <a href="{% url 'home' %}">Inicio</a>
             <span>/</span>
             <a href="{% url 'properties:list' %}">Propiedades</a>
@@ -16,21 +16,52 @@
 
         <h1 class="section-title">Propiedades en {{ municipality.name }}</h1>
 
-        <div class="alert" style="background: var(--surface); border-radius: var(--radius); padding: 16px; margin-bottom: 24px;">
-            <strong>{{ municipality.zone.name }}</strong> — {{ properties.count }} propiedades disponibles
+        <div class="municipality-info" role="status" aria-live="polite">
+            <span class="municipality-zone">{{ municipality.zone.name }}</span>
+            <span class="municipality-count">{{ properties.count }} propiedades disponibles</span>
         </div>
 
         {% if properties %}
-        <div class="grid">
+        <div class="grid" role="list" aria-label="Lista de propiedades">
             {% for property in properties %}
-            {% include 'partials/property_card.html' %}
+            <div role="listitem">
+                {% include 'partials/property_card.html' %}
+            </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="alert alert-info">
-            No hay propiedades en este municipio todavía.
+        <div class="ix-empty" role="status">
+            <div class="ix-empty__icon"><i class="bi bi-house-slash"></i></div>
+            <h3 class="ix-empty__title">No hay propiedades</h3>
+            <p class="ix-empty__text">No hay propiedades en este municipio todavía.</p>
         </div>
         {% endif %}
     </div>
 </section>
+
+<style>
+.municipality-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--ix-surface);
+    border-radius: var(--ix-radius-lg);
+    margin-bottom: 24px;
+    border-left: 4px solid var(--ix-gold);
+}
+
+.municipality-zone {
+    font-weight: 700;
+    color: var(--ix-navy);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.municipality-count {
+    color: var(--ix-muted);
+    font-size: 0.9rem;
+}
+</style>
 {% endblock %}
