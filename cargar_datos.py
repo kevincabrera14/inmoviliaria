@@ -9,11 +9,6 @@ from locations.models import Zone, Municipality
 def cargar_zonas():
     """Carga las 3 zonas del Valle de Aburrá con sus municipios."""
 
-    # Eliminar datos anteriores
-    Municipality.objects.all().delete()
-    Zone.objects.all().delete()
-    print("🗑️ Datos anteriores eliminados")
-
     # Definir zonas y municipios (ordenados de norte a sur)
     zonas_data = [
         {
@@ -49,22 +44,29 @@ def cargar_zonas():
         },
     ]
 
+    # Crear o actualizar zonas
     for zona_data in zonas_data:
-        zona = Zone.objects.create(
-            name=zona_data['name'],
+        zona, created = Zone.objects.update_or_create(
             slug=zona_data['slug'],
-            order=zona_data['order']
+            defaults={
+                'name': zona_data['name'],
+                'order': zona_data['order']
+            }
         )
-        print(f"✅ Zona creada: {zona.name}")
+        print(f"{'✅' if created else '🔄'} Zona {'creada' if created else 'actualizada'}: {zona.name}")
 
+        # Crear o actualizar municipios
         for muni_nombre, muni_order in zona_data['municipios']:
-            muni = Municipality.objects.create(
-                name=muni_nombre,
-                slug=muni_nombre.lower().replace(' ', '-').replace('í', 'i').replace('á', 'a'),
-                zone=zona,
-                order=muni_order
+            muni_slug = muni_nombre.lower().replace(' ', '-').replace('í', 'i').replace('á', 'a').replace('é', 'e')
+            muni, created = Municipality.objects.update_or_create(
+                slug=muni_slug,
+                defaults={
+                    'name': muni_nombre,
+                    'zone': zona,
+                    'order': muni_order
+                }
             )
-            print(f"   ✅ Municipio: {muni.name} ({zona.name})")
+            print(f"   {'✅' if created else '🔄'} Municipio {'creado' if created else 'actualizado'}: {muni.name} ({zona.name})")
 
     print("\n🎉 Carga completada!")
     print(f"Total zonas: {Zone.objects.count()}")
