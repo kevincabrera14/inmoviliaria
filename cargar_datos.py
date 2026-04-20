@@ -1,27 +1,42 @@
 import os
 import django
-import unicodedata
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
-from django.utils.text import slugify
 from locations.models import Zone, Municipality
 
+def limpiar_duplicados():
+    """Encuentra y corrige municipios duplicados."""
 
-def safe_slugify(text):
-    """Convierte texto a slug ASCII sin tildes."""
-    # Primero normalizar y eliminar tildes
-    slug = unicodedata.normalize('NFD', text)
-    slug = ''.join(c for c in slug if unicodedata.category(c) != 'Mn')
-    # Luego usar slugify de Django que es más robusto
-    return slugify(slug)
+    print("🔍 Buscando municipios duplicados...\n")
 
+    # Encontrar todos los nombres duplicados
+    from django.db.models import Count
+    duplicados = Municipality.objects.values('name').annotate(
+        count=Count('id')
+    ).filter(count__gt=1)
 
-def cargar_zonas():
-    """Actualiza las zonas y municipios del Valle de Aburrá."""
+    print(f"Municipios con nombres duplicados: {list(duplicados)}")
 
-    # Mapping de municipios a sus zonas
+    # Zonas correctas
+    zonas_data = {
+        'Zona Norte': {'slug': 'zona-norte', 'order': 1},
+        'Zona Centro': {'slug': 'zona-centro', 'order': 2},
+        'Zona Sur': {'slug': 'zona-sur', 'order': 3},
+    }
+
+    # Crear o actualizar zonas
+    zonas = {}
+    for nombre, data in zonas_data.items():
+        zona, created = Zone.objects.update_or_create(
+            slug=data['slug'],
+            defaults={'name': nombre, 'order': data['order']}
+        )
+        zonas[nombre] = zona
+        print(f"{'✅' if created else '🔄'} Zona: {nombre}")
+
+    # Mapping correcto de municipios a zonas
     municipio_zonas = {
         'Barbosa': 'Zona Norte',
         'Girardota': 'Zona Norte',
@@ -35,56 +50,47 @@ def cargar_zonas():
         'Caldas': 'Zona Sur',
     }
 
-    # Primero crear o actualizar zonas
-    zonas = {}
-    for nombre, slug in [('Zona Norte', 'zona-norte'), ('Zona Centro', 'zona-centro'), ('Zona Sur', 'zona-sur')]:
-        zona, created = Zone.objects.update_or_create(
-            slug=slug,
-            defaults={'name': nombre, 'order': list(municipio_zonas.values()).count(nombre)}
-        )
-        zonas[nombre] = zona
-        print(f"{'✅' if created else '🔄'} Zona: {nombre}")
+    # Procesar cada municipio duplicado
+    for dup in duplicados:
+        nombre = dup['name']
+        muni_list = Municipality.objects.filter(name=nombre).order_by('pk')
 
-    # Recolectar slugs usados para evitar duplicados
-    used_slugs = set(Municipality.objects.values_list('slug', flat=True))
-    print(f"\nSlugs ya usados: {used_slugs}")
+        print(f"\n📍 {nombre} tiene {muni_list.count()} registros")
 
-    # Actualizar municipios uno por uno
-    print("\n🔧 Actualizando municipios...")
-    for muni in Municipality.objects.all():
-        # Buscar la zona correcta
-        zona_nombre = municipio_zonas.get(muni.name)
-        if zona_nombre:
-            muni.zone = zonas[zona_nombre]
-            print(f"   📍 {muni.name} -> {zona_nombre}")
+        # Mantener el primero, eliminar los demás
+        primero = muni_list.first()
+        print(f"   ✅ Manteniendo: pk={primero.pk}, slug={primero.slug}, zone={primero.zone.name}")
 
-        # Generar slug limpio
-        new_slug = safe_slugify(muni.name)
+        # Asignar a la zona correcta
+        zona_correcta = municipio_zonas.get(nombre)
+        if zona_correcta:
+            primero.zone = zonas[zona_correcta]
+            primero.save()
+            print(f"   🔄 Zona asignada: {zona_correcta}")
 
-        # Si el slug ya existe y es de otro municipio, agregar su ID
-        if new_slug in used_slugs:
-            other = Municipality.objects.filter(slug=new_slug).first()
-            if other and other.pk != muni.pk:
-                # Crear slug único
-                new_slug = f"{new_slug}-{muni.pk}"
-                print(f"      ⚠️Slug duplicado, usando: {new_slug}")
+        # Eliminar duplicados
+        for dup_muni in muni_list[1:]:
+            # Contar propiedades antes de eliminar
+            prop_count = dup_muni.properties.count()
+            print(f"   🗑️ Eliminando duplicado: pk={dup_muni.pk}, slug={dup_muni.slug}, propiedades={prop_count}")
 
-        muni.slug = new_slug
-        muni.save()
-        used_slugs.add(new_slug)
-        print(f"      ✅ slug: {new_slug}")
+            if prop_count > 0:
+                # Transferir propiedades al primero
+                print(f"      ↪️ Moviendo {prop_count} propiedades al municipio principal...")
+                from properties.models import Property
+                Property.objects.filter(municipality=dup_muni).update(municipality=primero)
 
-    print("\n🎉 Completado!")
-    print(f"Zonas: {Zone.objects.count()}")
-    print(f"Municipios: {Municipality.objects.count()}")
+            dup_muni.delete()
+
+    # Mostrar resultado final
+    print("\n" + "="*50)
+    print("🎉 RESULTADO FINAL:")
+    print("="*50)
     for zona in Zone.objects.all().order_by('order'):
-        muni_list = ', '.join([m.name for m in zona.municipalities.all().order_by('order')])
-        print(f"  {zona.name}: {muni_list}")
+        print(f"\n{zona.name}:")
+        for muni in zona.municipalities.all().order_by('order'):
+            print(f"  - {muni.name} (slug: {muni.slug})")
 
 
 if __name__ == '__main__':
-    cargar_zonas()
-
-
-if __name__ == '__main__':
-    cargar_zonas()
+    limpiar_duplicados()
