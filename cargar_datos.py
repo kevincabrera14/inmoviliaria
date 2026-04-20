@@ -1,43 +1,25 @@
 import os
 import django
 import unicodedata
-import re
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
+from django.utils.text import slugify
 from locations.models import Zone, Municipality
 
 
-def normalize_slug(text):
-    """Convierte texto a slug ASCII sin tildes ni caracteres especiales."""
+def safe_slugify(text):
+    """Convierte texto a slug ASCII sin tildes."""
+    # Primero normalizar y eliminar tildes
     slug = unicodedata.normalize('NFD', text)
     slug = ''.join(c for c in slug if unicodedata.category(c) != 'Mn')
-    slug = slug.lower().strip()
-    slug = re.sub(r'[\s_]+', '-', slug)
-    slug = re.sub(r'[^a-z0-9\-]', '', slug)
-    slug = re.sub(r'-+', '-', slug)
-    return slug
+    # Luego usar slugify de Django que es más robusto
+    return slugify(slug)
 
 
 def cargar_zonas():
     """Actualiza las zonas y municipios del Valle de Aburrá."""
-
-    # Primero, crear o actualizar las zonas
-    zonas_data = [
-        {'name': 'Zona Norte', 'slug': 'zona-norte', 'order': 1},
-        {'name': 'Zona Centro', 'slug': 'zona-centro', 'order': 2},
-        {'name': 'Zona Sur', 'slug': 'zona-sur', 'order': 3},
-    ]
-
-    zonas = {}
-    for zd in zonas_data:
-        zona, created = Zone.objects.update_or_create(
-            slug=zd['slug'],
-            defaults={'name': zd['name'], 'order': zd['order']}
-        )
-        zonas[zd['name']] = zona
-        print(f"{'✅' if created else '🔄'} Zona: {zona.name}")
 
     # Mapping de municipios a sus zonas
     municipio_zonas = {
@@ -53,28 +35,50 @@ def cargar_zonas():
         'Caldas': 'Zona Sur',
     }
 
-    # Actualizar todos los slugs de municipios
-    print("\n🔧 Corrigiendo slugs de municipios...")
-    for muni in Municipality.objects.all():
-        correct_slug = normalize_slug(muni.name)
-        muni.slug = correct_slug
-        muni.save()
-        print(f"   {muni.name} -> slug: {correct_slug}")
+    # Primero crear o actualizar zonas
+    zonas = {}
+    for nombre, slug in [('Zona Norte', 'zona-norte'), ('Zona Centro', 'zona-centro'), ('Zona Sur', 'zona-sur')]:
+        zona, created = Zone.objects.update_or_create(
+            slug=slug,
+            defaults={'name': nombre, 'order': list(municipio_zonas.values()).count(nombre)}
+        )
+        zonas[nombre] = zona
+        print(f"{'✅' if created else '🔄'} Zona: {nombre}")
 
-    # Asignar municipios a zonas correctas
-    print("\n📍 Asignando municipios a zonas...")
+    # Recolectar slugs usados para evitar duplicados
+    used_slugs = set(Municipality.objects.values_list('slug', flat=True))
+    print(f"\nSlugs ya usados: {used_slugs}")
+
+    # Actualizar municipios uno por uno
+    print("\n🔧 Actualizando municipios...")
     for muni in Municipality.objects.all():
+        # Buscar la zona correcta
         zona_nombre = municipio_zonas.get(muni.name)
-        if zona_nombre and muni.zone.name != zona_nombre:
+        if zona_nombre:
             muni.zone = zonas[zona_nombre]
-            muni.save()
-            print(f"   {muni.name} -> {zona_nombre}")
+            print(f"   📍 {muni.name} -> {zona_nombre}")
+
+        # Generar slug limpio
+        new_slug = safe_slugify(muni.name)
+
+        # Si el slug ya existe y es de otro municipio, agregar su ID
+        if new_slug in used_slugs:
+            other = Municipality.objects.filter(slug=new_slug).first()
+            if other and other.pk != muni.pk:
+                # Crear slug único
+                new_slug = f"{new_slug}-{muni.pk}"
+                print(f"      ⚠️Slug duplicado, usando: {new_slug}")
+
+        muni.slug = new_slug
+        muni.save()
+        used_slugs.add(new_slug)
+        print(f"      ✅ slug: {new_slug}")
 
     print("\n🎉 Completado!")
     print(f"Zonas: {Zone.objects.count()}")
     print(f"Municipios: {Municipality.objects.count()}")
-    for zona in Zone.objects.all():
-        muni_list = ', '.join([m.name for m in zona.municipalities.all()])
+    for zona in Zone.objects.all().order_by('order'):
+        muni_list = ', '.join([m.name for m in zona.municipalities.all().order_by('order')])
         print(f"  {zona.name}: {muni_list}")
 
 
