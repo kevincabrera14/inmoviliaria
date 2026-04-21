@@ -3,7 +3,7 @@
 {% block title %}{{ municipality.name }} - Inmobiliaria Medellín{% endblock %}
 
 {% block content %}
-<section class="section">
+<section class="ix-section" style="background: var(--ix-surface);">
     <div class="container">
         <!-- Breadcrumb -->
         <nav class="breadcrumb" aria-label="Navegación">
@@ -14,7 +14,7 @@
             <span>{{ municipality.name }}</span>
         </nav>
 
-        <h1 class="section-title">Propiedades en {{ municipality.name }}</h1>
+        <h1 class="ix-list-title">Propiedades en {{ municipality.name }}</h1>
 
         <div class="municipality-info" role="status" aria-live="polite">
             <span class="municipality-zone">{{ municipality.zone.name }}</span>
@@ -38,30 +38,4 @@
         {% endif %}
     </div>
 </section>
-
-<style>
-.municipality-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
-    background: var(--ix-surface);
-    border-radius: var(--ix-radius-lg);
-    margin-bottom: 24px;
-    border-left: 4px solid var(--ix-gold);
-}
-
-.municipality-zone {
-    font-weight: 700;
-    color: var(--ix-navy);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.municipality-count {
-    color: var(--ix-muted);
-    font-size: 0.9rem;
-}
-</style>
 {% endblock %}
