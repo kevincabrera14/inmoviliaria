@@ -7,6 +7,29 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
 
+/* ═══════════════════════════════════════════════════════════
+   RESET GLOBAL — CRÍTICO PARA RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+img, video, iframe {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* ── Variables propias ── */
 :root {
     /* Aliases para compatibilidad */
