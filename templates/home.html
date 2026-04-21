@@ -4,32 +4,22 @@
 
 {% block content %}
 
-<!-- ====================================================
-     HERO + FILTROS INTEGRADOS
-     ==================================================== -->
 <section class="ix-hero ix-hero--centered">
-
     <div class="ix-hero__bg" aria-hidden="true">
         <div class="ix-hero__circle ix-hero__circle--1"></div>
         <div class="ix-hero__circle ix-hero__circle--2"></div>
     </div>
-
     <div class="container">
-
         <p class="ix-hero__eyebrow">
             <span class="ix-hero__pulse"></span>
             Valle de Aburrá &middot; Medellín
         </p>
-
         <h1 class="ix-hero__title">
             Encuentra tu <span class="ix-hero__title-em">propiedad</span> en Medellín
         </h1>
-
         <p class="ix-hero__sub">
             Casas, Apartamentos, Lotes, etc.
         </p>
-
-        <!-- FILTROS DENTRO DEL HERO -->
         <div class="ix-search-box">
             <div class="ix-search-box__header">
                 <i class="bi bi-search"></i>
@@ -40,7 +30,7 @@
                     <label class="ix-field__label"><i class="bi bi-tag-fill"></i> Operación</label>
                     <select name="operation" class="ix-field__control">
                         <option value="">Todas</option>
-                        <option value="venta"    {% if filters.operation == 'venta'    %}selected{% endif %}>Venta</option>
+                        <option value="venta" {% if filters.operation == 'venta' %}selected{% endif %}>Venta</option>
                         <option value="arriendo" {% if filters.operation == 'arriendo' %}selected{% endif %}>Arriendo</option>
                     </select>
                 </div>
@@ -48,9 +38,9 @@
                     <label class="ix-field__label"><i class="bi bi-house-fill"></i> Tipo</label>
                     <select name="type" class="ix-field__control">
                         <option value="">Todos</option>
-                        <option value="casa"        {% if filters.type == 'casa'        %}selected{% endif %}>Casa</option>
+                        <option value="casa" {% if filters.type == 'casa' %}selected{% endif %}>Casa</option>
                         <option value="apartamento" {% if filters.type == 'apartamento' %}selected{% endif %}>Apartamento</option>
-                        <option value="terreno"     {% if filters.type == 'terreno'     %}selected{% endif %}>Terreno</option>
+                        <option value="terreno" {% if filters.type == 'terreno' %}selected{% endif %}>Terreno</option>
                     </select>
                 </div>
                 <div class="ix-field">
@@ -62,7 +52,6 @@
                         {% endfor %}
                     </select>
                 </div>
-                
                 <div class="ix-field ix-field--action">
                     <button type="submit" class="ix-search-btn">
                         <i class="bi bi-search"></i> Buscar
@@ -70,8 +59,6 @@
                 </div>
             </form>
         </div>
-
-        <!-- Acción + badges -->
         <div class="ix-hero__footer">
             <a href="#propiedades" class="ix-btn ix-btn--ghost">
                 <i class="bi bi-arrow-down"></i> Ver propiedades
@@ -82,36 +69,36 @@
                 <span class="ix-badge"><i class="bi bi-lightning-charge-fill"></i> Publicación rápida</span>
             </div>
         </div>
-
     </div>
 </section>
 
 
-<!-- ====================================================
-     EXPLORAR POR ZONA
-     ==================================================== -->
 <section class="ix-section ix-section--alt" id="zonas">
-    <div class="ix-zones-grid">
-    {% for zone in zones %}{% if zone.name != "Valle de Aburrá" %}
-    <div class="ix-zone-card">
-        <div class="ix-zone-card__glow" aria-hidden="true"></div>
-        <div class="ix-zone-card__icon"><i class="bi bi-map-fill"></i></div>
-        <h3 class="ix-zone-card__name">{{ zone.name }}</h3>
-        <p class="ix-zone-card__count">{{ zone.municipalities.count }} municipios</p>
-        <div class="ix-zone-card__links">
-            {% for muni in zone.municipalities.all %}{% if muni.slug %}
-            <a href="{% url 'properties:by_municipality' muni.slug %}" class="ix-zone-card__pill">{{ muni.name }}</a>
+    <div class="container">
+        <div class="ix-section__head">
+            <div class="ix-tag"><span class="ix-tag__bar"></span> Zonas</div>
+            <h2 class="ix-section__title">Explorar por zona</h2>
+            <p class="ix-section__desc">Descubre propiedades en cada rincón del Valle de Aburrá</p>
+        </div>
+        <div class="ix-zones-grid">
+            {% for zone in zones %}{% if zone.name != "Valle de Aburrá" %}
+            <div class="ix-zone-card">
+                <div class="ix-zone-card__glow" aria-hidden="true"></div>
+                <div class="ix-zone-card__icon"><i class="bi bi-map-fill"></i></div>
+                <h3 class="ix-zone-card__name">{{ zone.name }}</h3>
+                <p class="ix-zone-card__count">{{ zone.municipalities.count }} municipios</p>
+                <div class="ix-zone-card__links">
+                    {% for muni in zone.municipalities.all %}{% if muni.slug %}
+                    <a href="{% url 'properties:by_municipality' muni.slug %}" class="ix-zone-card__pill">{{ muni.name }}</a>
+                    {% endif %}{% endfor %}
+                </div>
+            </div>
             {% endif %}{% endfor %}
         </div>
     </div>
-    {% endif %}{% endfor %}
-</div>
 </section>
 
 
-<!-- ====================================================
-     PROPIEDADES RECIENTES
-     ==================================================== -->
 <section class="ix-section" id="propiedades">
     <div class="container">
         <div class="ix-section__head ix-section__head--row">
@@ -144,9 +131,6 @@
 </section>
 
 
-<!-- ====================================================
-     CTA BANNER
-     ==================================================== -->
 <section class="ix-cta">
     <div class="container">
         <div class="ix-cta__inner">
