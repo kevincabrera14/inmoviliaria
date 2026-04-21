@@ -22,12 +22,11 @@
         </p>
 
         <h1 class="ix-hero__title">
-            Encuentra tu <span class="ix-hero__title-em">hogar ideal</span> en Medellín
+            Encuentra tu <span class="ix-hero__title-em">propiedad</span> en Medellín
         </h1>
 
         <p class="ix-hero__sub">
-            Casas, apartamentos y más en las 3 zonas del Valle de Aburrá.
-            Conectamos personas con el espacio perfecto.
+            Casas, Apartamentos, Lotes, etc.
         </p>
 
         <!-- FILTROS DENTRO DEL HERO -->
@@ -99,28 +98,21 @@
      EXPLORAR POR ZONA
      ==================================================== -->
 <section class="ix-section ix-section--alt" id="zonas">
-    <div class="container">
-        <div class="ix-section__head">
-            <div class="ix-tag"><span class="ix-tag__bar"></span> Zonas</div>
-            <h2 class="ix-section__title">Explorar por zona</h2>
-            <p class="ix-section__desc">Descubre propiedades en cada rincón del Valle de Aburrá</p>
-        </div>
-        <div class="ix-zones-grid">
-            {% for zone in zones %}
-            <div class="ix-zone-card">
-                <div class="ix-zone-card__glow" aria-hidden="true"></div>
-                <div class="ix-zone-card__icon"><i class="bi bi-map-fill"></i></div>
-                <h3 class="ix-zone-card__name">{{ zone.name }}</h3>
-                <p class="ix-zone-card__count">{{ zone.municipalities.count }} municipios</p>
-                <div class="ix-zone-card__links">
-                    {% for muni in zone.municipalities.all %}{% if muni.slug %}
-                    <a href="{% url 'properties:by_municipality' muni.slug %}" class="ix-zone-card__pill">{{ muni.name }}</a>
-                    {% endif %}{% endfor %}
-                </div>
-            </div>
-            {% endfor %}
+    <div class="ix-zones-grid">
+    {% for zone in zones %}{% if zone.name != "Valle de Aburrá" %}
+    <div class="ix-zone-card">
+        <div class="ix-zone-card__glow" aria-hidden="true"></div>
+        <div class="ix-zone-card__icon"><i class="bi bi-map-fill"></i></div>
+        <h3 class="ix-zone-card__name">{{ zone.name }}</h3>
+        <p class="ix-zone-card__count">{{ zone.municipalities.count }} municipios</p>
+        <div class="ix-zone-card__links">
+            {% for muni in zone.municipalities.all %}{% if muni.slug %}
+            <a href="{% url 'properties:by_municipality' muni.slug %}" class="ix-zone-card__pill">{{ muni.name }}</a>
+            {% endif %}{% endfor %}
         </div>
     </div>
+    {% endif %}{% endfor %}
+</div>
 </section>
 
 
