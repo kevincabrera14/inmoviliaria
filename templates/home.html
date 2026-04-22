@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Inicio - Inmobiliaria Medellín{% endblock %}
 
@@ -131,18 +132,79 @@
 </section>
 
 
-<section class="ix-cta">
-    <div class="container">
-        <div class="ix-cta__inner">
-            <div class="ix-cta__text">
-                <h2 class="ix-cta__title">¿Tienes una propiedad?</h2>
-                <p class="ix-cta__sub">Llega a miles de compradores en el Valle de Aburrá</p>
-            </div>
-            <a href="{% url 'users:login' %}" class="ix-btn ix-btn--gold ix-btn--lg">
-                <i class="bi bi-rocket-takeoff-fill"></i> Empezar ahora
-            </a>
+
+
+<div id="modal-info" class="ix-modal" role="dialog" aria-modal="true" aria-label="Información">
+    <div class="ix-modal__overlay" onclick="cerrarModalInfo()"></div>
+    <div class="ix-modal__panel">
+        <button class="ix-modal__close" onclick="cerrarModalInfo()" aria-label="Cerrar">
+            <i class="bi bi-x-lg"></i>
+        </button>
+        <div class="ix-modal__logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" onerror="this.style.display='none'">
         </div>
+        <p class="ix-modal__desc">
+            Tu socio de confianza en el mercado inmobiliario de Medellín y el Valle de Aburrá.
+        </p>
+        <div class="ix-modal__social">
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+        </div>
+        <div class="ix-modal__divider"></div>
+        <h3 class="ix-modal__section-title"><i class="bi bi-link-45deg"></i> Enlaces</h3>
+        <ul class="ix-modal__links">
+            <li><a href="{% url 'home' %}"><i class="bi bi-house-fill"></i> Inicio</a></li>
+            <li><a href="#propiedades"><i class="bi bi-buildings-fill"></i> Propiedades</a></li>
+            <li><a href="{% url 'users:login' %}"><i class="bi bi-person-fill"></i> Portal Vendedores</a></li>
+        </ul>
+        <div class="ix-modal__divider"></div>
+        <h3 class="ix-modal__section-title"><i class="bi bi-telephone-fill"></i> Contacto</h3>
+        <ul class="ix-modal__contact">
+            <li><i class="bi bi-geo-alt-fill"></i> Medellín, Antioquia</li>
+            <li><i class="bi bi-telephone-fill"></i> +57 300 123 4567</li>
+        </ul>
+        <div class="ix-modal__divider"></div>
+        <p class="ix-modal__copy">&copy; 2026 Inmobiliaria Medellín. Todos los derechos reservados.</p>
     </div>
-</section>
+</div>
+
+<style>
+.ix-modal { display: none; position: fixed; inset: 0; z-index: 9999; align-items: flex-end; }
+.ix-modal.is-open { display: flex; }
+.ix-modal__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+.ix-modal__panel { position: relative; background: var(--ix-deep); width: 100%; max-height: 85vh; overflow-y: auto; border-radius: 24px 24px 0 0; padding: 32px 24px 40px; animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1); -webkit-overflow-scrolling: touch; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.ix-modal__close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.ix-modal__logo { text-align: center; margin-bottom: 12px; }
+.ix-modal__logo img { height: 64px; margin: 0 auto; }
+.ix-modal__desc { text-align: center; font-size: 0.88rem; color: rgba(255,255,255,0.6); margin: 0 0 20px; line-height: 1.6; }
+.ix-modal__social { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+.ix-modal__social a { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: var(--ix-gold); font-size: 1.1rem; text-decoration: none; transition: background 0.2s; }
+.ix-modal__social a:hover { background: var(--ix-gold); color: var(--ix-deep); }
+.ix-modal__divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 20px 0; }
+.ix-modal__section-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ix-gold); margin: 0 0 12px; display: flex; align-items: center; gap: 6px; }
+.ix-modal__links, .ix-modal__contact { list-style: none; padding: 0; margin: 0; }
+.ix-modal__links li, .ix-modal__contact li { margin-bottom: 10px; }
+.ix-modal__links a { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; padding: 10px 12px; border-radius: 10px; transition: background 0.2s; }
+.ix-modal__links a:hover { background: rgba(255,255,255,0.08); color: white; }
+.ix-modal__links i, .ix-modal__contact i { color: var(--ix-gold); font-size: 1rem; width: 20px; }
+.ix-modal__contact li { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.7); font-size: 0.9rem; padding: 4px 12px; }
+.ix-modal__copy { text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.35); margin: 0; }
+</style>
+
+<script>
+function abrirModalInfo() {
+    document.getElementById('modal-info').classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+}
+function cerrarModalInfo() {
+    document.getElementById('modal-info').classList.remove('is-open');
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') cerrarModalInfo();
+});
+</script>
 
 {% endblock %}

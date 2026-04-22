@@ -1,40 +1,6 @@
 {% load static %}
 <footer class="ix-footer" role="contentinfo">
     <div class="container">
-        <div class="ix-footer__grid">
-            <div class="ix-footer__brand">
-                <div class="ix-footer__logo">
-                    <img src="{% static 'img/logo.png' %}" alt="Inmobiliaria Medellín">
-                </div>
-                <p class="ix-footer__desc">
-                    Tu socio de confianza en el mercado inmobiliario de Medellín y el Valle de Aburrá.
-                </p>
-                <div class="ix-footer__social">
-                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                    <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
-                </div>
-            </div>
-
-            <div class="ix-footer__links">
-                <h4 class="ix-footer__title">Enlaces</h4>
-                <ul>
-                    <li><a href="{% url 'home' %}">Inicio</a></li>
-                    <li><a href="{% url 'properties:list' %}">Propiedades</a></li>
-                    <li><a href="{% url 'users:login' %}">Portal Vendedores</a></li>
-                </ul>
-            </div>
-
-            <div class="ix-footer__contact">
-                <h4 class="ix-footer__title">Contacto</h4>
-                <ul>
-                    <li><i class="bi bi-geo-alt-fill"></i> Medellín, Antioquia</li>
-                    <li><i class="bi bi-telephone-fill"></i> +57 300 123 4567</li>
-                    <li><i class="bi bi-envelope-fill"></i> info@inmobiliariamedellin.com</li>
-                </ul>
-            </div>
-        </div>
-
         <div class="ix-footer__bottom">
             <p>&copy; 2026 Inmobiliaria Medellín. Todos los derechos reservados.</p>
         </div>
