@@ -14,6 +14,7 @@
 .page-header h1 {
     font-size: 1.25rem;
     font-weight: 600;
+    margin: 0;
 }
 </style>
 {% endblock %}
@@ -50,9 +51,7 @@
             <tbody>
                 {% for property in properties %}
                 <tr>
-                    <td>
-                        <a href="{% url 'properties:detail' property.pk %}">{{ property.title }}</a>
-                    </td>
+                    <td><a href="{% url 'properties:detail' property.pk %}">{{ property.title }}</a></td>
                     <td>{{ property.get_property_type_display }}</td>
                     <td>{{ property.get_operation_type_display }}</td>
                     <td>${{ property.price|floatformat:0 }}</td>
@@ -62,20 +61,16 @@
                             {{ property.get_status_display }}
                         </span>
                     </td>
-                    <td>
-                        <a href="{% url 'dashboard:property_edit' property.pk %}" class="btn" style="padding: 6px 12px; background: var(--primary); color: white; border-radius: var(--radius); font-size: 0.85rem;">
+                    <td style="display: flex; gap: 8px;">
+                        <a href="{% url 'dashboard:property_edit' property.pk %}" 
+                           style="padding: 6px 12px; background: var(--primary); color: white; border-radius: var(--radius); font-size: 0.85rem; text-decoration: none;">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <a href="{% url 'dashboard:property_delete' property.pk %}" class="btn" style="padding: 6px 12px; background: #dc3545; color: white; border-radius: var(--radius); font-size: 0.85rem;" onclick="return confirm('¿Estás seguro?')">
+                        <a href="{% url 'dashboard:property_delete' property.pk %}" 
+                           style="padding: 6px 12px; background: #dc3545; color: white; border-radius: var(--radius); font-size: 0.85rem; text-decoration: none;"
+                           onclick="return confirm('¿Estás seguro de eliminar esta propiedad?')">
                             <i class="bi bi-trash"></i>
                         </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                        No tienes propiedades creadas.
-                        <a href="{% url 'dashboard:property_create' %}">Crea la primera</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -84,7 +79,7 @@
     </div>
     {% else %}
     <div class="card" style="text-align: center; padding: 48px;">
-        <i class="bi bi-building" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 16px;"></i>
+        <i class="bi bi-building" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 16px; display: block;"></i>
         <p style="color: var(--text-muted); margin-bottom: 16px;">No tienes propiedades creadas todavía.</p>
         <a href="{% url 'dashboard:property_create' %}" class="btn btn-primary">Crear mi primera propiedad</a>
     </div>
