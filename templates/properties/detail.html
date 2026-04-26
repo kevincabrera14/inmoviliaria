@@ -3,6 +3,165 @@
 
 {% block title %}{{ property.title }} - Inmobiliaria Medellín{% endblock %}
 
+{% block extra_css %}
+<style>
+.ix-detail-images {
+    position: relative;
+}
+
+.ix-detail-main-image {
+    position: relative;
+    overflow: hidden;
+    background: var(--ix-surface);
+    border-radius: var(--radius);
+}
+
+.ix-detail-main-image img,
+.ix-detail-main-image video {
+    width: 100%;
+    display: block;
+    max-height: 520px;
+    object-fit: cover;
+}
+
+.ix-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    z-index: 10;
+}
+
+.ix-carousel-btn:hover {
+    background: rgba(0,0,0,0.8);
+}
+
+.ix-carousel-btn--prev { left: 12px; }
+.ix-carousel-btn--next { right: 12px; }
+
+.ix-carousel-counter {
+    position: absolute;
+    bottom: 12px;
+    right: 14px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 0.8rem;
+    padding: 2px 10px;
+    border-radius: 20px;
+    z-index: 10;
+}
+
+.ix-detail-thumbs {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.ix-detail-thumbs .ix-thumb {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    transition: border-color 0.2s, opacity 0.2s;
+    opacity: 0.65;
+    position: relative;
+}
+
+.ix-detail-thumbs .ix-thumb:hover {
+    opacity: 1;
+}
+
+.ix-detail-thumbs .ix-thumb.ix-thumb-active {
+    border-color: var(--primary, #b8860b);
+    opacity: 1;
+}
+
+.ix-thumb-wrap {
+    position: relative;
+    width: 80px;
+    height: 60px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.ix-thumb-wrap img,
+.ix-thumb-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    opacity: 0.65;
+    transition: border-color 0.2s, opacity 0.2s;
+    display: block;
+}
+
+.ix-thumb-wrap:hover img,
+.ix-thumb-wrap:hover video {
+    opacity: 1;
+}
+
+.ix-thumb-wrap.ix-thumb-active img,
+.ix-thumb-wrap.ix-thumb-active video {
+    border-color: var(--primary, #b8860b);
+    opacity: 1;
+}
+
+.ix-thumb-video-badge {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    font-size: 0.6rem;
+    padding: 1px 5px;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.ix-detail-main-image--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    background: var(--ix-surface);
+}
+
+.ix-detail-main-image--empty i {
+    font-size: 4rem;
+    color: var(--ix-muted);
+}
+
+@media (max-width: 576px) {
+    .ix-carousel-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+    }
+    .ix-carousel-btn--prev { left: 8px; }
+    .ix-carousel-btn--next { right: 8px; }
+    .ix-thumb-wrap {
+        width: 60px;
+        height: 45px;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="ix-section">
     <div class="container">
@@ -24,19 +183,46 @@
 
         <div class="ix-detail-grid">
 
-            <!-- Image Gallery -->
+            <!-- Galería de imágenes y videos -->
             <div class="ix-detail-images">
                 {% if images %}
+
                 <div class="ix-detail-main-image">
-                    <img src="{{ images.0.image.url }}" alt="{{ property.title }}">
+                    <!-- El elemento principal se reemplaza dinámicamente con JS -->
+                    {% with images.0 as first %}
+                        {% if first.image.url|slice:"-4:" == ".mp4" or first.image.url|slice:"-4:" == ".mov" or first.image.url|slice:"-5:" == ".webm" %}
+                        <video id="ix-main-media" src="{{ first.image.url }}" controls autoplay muted loop playsinline></video>
+                        {% else %}
+                        <img id="ix-main-media" src="{{ first.image.url }}" alt="{{ property.title }}">
+                        {% endif %}
+                    {% endwith %}
+
+                    {% if images.count > 1 %}
+                    <button class="ix-carousel-btn ix-carousel-btn--prev" onclick="changeMedia(-1)" aria-label="Anterior">&#8249;</button>
+                    <button class="ix-carousel-btn ix-carousel-btn--next" onclick="changeMedia(1)" aria-label="Siguiente">&#8250;</button>
+                    <span class="ix-carousel-counter" id="ix-counter">1 / {{ images.count }}</span>
+                    {% endif %}
                 </div>
+
                 {% if images.count > 1 %}
-                <div class="ix-detail-thumbs">
-                    {% for img in images|slice:"1:" %}
-                    <img src="{{ img.image.url }}" alt="Imagen {{ forloop.counter }}">
+                <div class="ix-detail-thumbs" id="ix-thumbs">
+                    {% for img in images %}
+                    {% with img.image.url as url %}
+                    <div class="ix-thumb-wrap {% if forloop.first %}ix-thumb-active{% endif %}"
+                         onclick="goToMedia({{ forloop.counter0 }})"
+                         data-index="{{ forloop.counter0 }}">
+                        {% if url|slice:"-4:" == ".mp4" or url|slice:"-4:" == ".mov" or url|slice:"-5:" == ".webm" %}
+                            <video src="{{ url }}" muted preload="metadata"></video>
+                            <span class="ix-thumb-video-badge">▶ VIDEO</span>
+                        {% else %}
+                            <img src="{{ url }}" alt="Miniatura {{ forloop.counter }}">
+                        {% endif %}
+                    </div>
+                    {% endwith %}
                     {% endfor %}
                 </div>
                 {% endif %}
+
                 {% else %}
                 <div class="ix-detail-main-image ix-detail-main-image--empty">
                     <i class="bi bi-image"></i>
@@ -44,7 +230,7 @@
                 {% endif %}
             </div>
 
-            <!-- Main Info -->
+            <!-- Info principal -->
             <div class="ix-detail-info">
                 <div class="ix-detail-header">
                     <span class="ix-detail-zone">{{ property.municipality.zone.name }}</span>
@@ -106,7 +292,7 @@
                 {% endif %}
             </div>
 
-            <!-- Contact Card -->
+            <!-- Tarjeta de contacto -->
             <div class="ix-detail-contact">
                 <div class="ix-contact-card">
                     <h3 class="ix-contact-title">Contactar al vendedor</h3>
@@ -127,18 +313,13 @@
                     {% endif %}
 
                     <div class="ix-contact-actions">
-                        <a
-                            href="https://wa.me/{{ whatsapp_number }}?text=Hola, me interesa la propiedad: {{ property.title|urlencode }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="ix-btn ix-btn--whatsapp ix-btn--block"
-                        >
+                        <a href="https://wa.me/{{ whatsapp_number }}?text=Hola, me interesa la propiedad: {{ property.title|urlencode }}"
+                           target="_blank" rel="noopener noreferrer"
+                           class="ix-btn ix-btn--whatsapp ix-btn--block">
                             <i class="bi bi-whatsapp"></i> WhatsApp
                         </a>
-                        <a
-                            href="mailto:?subject=Interés en {{ property.title|urlencode }}"
-                            class="ix-btn ix-btn--outline ix-btn--block"
-                        >
+                        <a href="mailto:?subject=Interés en {{ property.title|urlencode }}"
+                           class="ix-btn ix-btn--outline ix-btn--block">
                             <i class="bi bi-envelope-fill"></i> Email
                         </a>
                     </div>
@@ -147,7 +328,7 @@
 
         </div>
 
-        <!-- Related Properties -->
+        <!-- Propiedades relacionadas -->
         {% if related %}
         <div class="ix-detail-related">
             <h2 class="ix-section__title">Propiedades relacionadas</h2>
@@ -161,4 +342,95 @@
 
     </div>
 </section>
+
+{% if images and images.count > 1 %}
+<script>
+(function () {
+    // Construir array con url y tipo de cada archivo
+    const media = [
+        {% for img in images %}
+        {
+            url: "{{ img.image.url }}",
+            isVideo: {{ img.image.url|lower|slice:"-4:" }} === ".mp4" ||
+                     "{{ img.image.url|lower|slice:'-4:' }}" === ".mov" ||
+                     "{{ img.image.url|lower|slice:'-5:' }}" === ".webm"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    let current = 0;
+    const container = document.querySelector('.ix-detail-main-image');
+    const thumbWraps = document.querySelectorAll('.ix-thumb-wrap');
+    const counter = document.getElementById('ix-counter');
+
+    function isVideo(url) {
+        const u = url.toLowerCase();
+        return u.endsWith('.mp4') || u.endsWith('.mov') || u.endsWith('.webm') || u.endsWith('.avi');
+    }
+
+    function updateMain() {
+        const item = media[current];
+        // Quitar elemento anterior (img o video) pero dejar botones y counter
+        const old = document.getElementById('ix-main-media');
+        if (old) old.remove();
+
+        let el;
+        if (isVideo(item.url)) {
+            el = document.createElement('video');
+            el.src = item.url;
+            el.controls = true;
+            el.autoplay = true;
+            el.muted = true;
+            el.loop = true;
+            el.setAttribute('playsinline', '');
+        } else {
+            el = document.createElement('img');
+            el.src = item.url;
+            el.alt = document.querySelector('.ix-detail-title') ?
+                     document.querySelector('.ix-detail-title').textContent : '';
+        }
+        el.id = 'ix-main-media';
+        // Insertar antes de los botones (primer hijo del container)
+        container.insertBefore(el, container.firstChild);
+
+        // Actualizar miniaturas activas
+        thumbWraps.forEach(function (w, i) {
+            w.classList.toggle('ix-thumb-active', i === current);
+        });
+
+        // Actualizar contador
+        if (counter) counter.textContent = (current + 1) + ' / ' + media.length;
+    }
+
+    window.changeMedia = function (dir) {
+        current += dir;
+        if (current < 0) current = media.length - 1;
+        if (current >= media.length) current = 0;
+        updateMain();
+    };
+
+    window.goToMedia = function (index) {
+        current = index;
+        updateMain();
+    };
+
+    // Teclado ← →
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') changeMedia(-1);
+        if (e.key === 'ArrowRight') changeMedia(1);
+    });
+
+    // Swipe táctil
+    let touchStartX = 0;
+    container.addEventListener('touchstart', function (e) {
+        touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    container.addEventListener('touchend', function (e) {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) changeMedia(diff > 0 ? 1 : -1);
+    }, { passive: true });
+})();
+</script>
+{% endif %}
+
 {% endblock %}
