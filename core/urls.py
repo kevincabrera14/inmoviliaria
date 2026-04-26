@@ -15,6 +15,11 @@ urlpatterns = [
 ]
 
 # Servir archivos media en producción
-urlpatterns += [
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-]
+# IMPORTANTE: esta línea debe estar ANTES de las rutas de admin y otras
+# para que tenga prioridad sobre whitenoise
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
