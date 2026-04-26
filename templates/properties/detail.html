@@ -1,3 +1,4 @@
+{% load property_extras %}
 {% extends 'base.html' %}
 
 {% block title %}{{ property.title }} - Inmobiliaria Medellín{% endblock %}
@@ -49,7 +50,7 @@
                     <span class="ix-detail-zone">{{ property.municipality.zone.name }}</span>
                     <h1 class="ix-detail-title">{{ property.title }}</h1>
                     <div class="ix-detail-price">
-                        <span class="ix-detail-price-value">${{ property.price|floatformat:0 }}</span>
+                        <span class="ix-detail-price-value">{{ property.price|format_price }}</span>
                         <span class="ix-detail-price-type">/ {{ property.get_operation_type_display }}</span>
                     </div>
                 </div>
@@ -66,7 +67,7 @@
                     {% if property.area %}
                     <div class="ix-detail-spec" role="listitem">
                         <i class="bi bi-rulers"></i>
-                        <span>{{ property.area }} m²</span>
+                        <span>{{ property.area }}</span>
                     </div>
                     {% endif %}
                     {% if property.rooms %}

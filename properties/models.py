@@ -37,12 +37,11 @@ class Property(models.Model):
         max_length=20,
         choices=OperationType.choices
     )
-    area = models.DecimalField(
+    area = models.CharField(
         'Área (m²)',
-        max_digits=8,
-        decimal_places=2,
-        null=True,
-        blank=True
+        max_length=50,
+        blank=True,
+        default=''
     )
     rooms = models.PositiveIntegerField('Habitaciones', null=True, blank=True)
     bathrooms = models.PositiveIntegerField('Baños', null=True, blank=True)

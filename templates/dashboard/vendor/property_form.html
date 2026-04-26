@@ -84,6 +84,40 @@
     border-radius: var(--radius);
 }
 
+.image-preview-item {
+    position: relative;
+}
+
+.image-preview-item .remove-image {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: var(--danger);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    line-height: 20px;
+    text-align: center;
+}
+
+.new-image-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.new-image-preview img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
 .breadcrumb {
     display: flex;
     align-items: center;
@@ -190,17 +224,52 @@
             <h3>Imágenes</h3>
             <div class="form-group">
                 <label>Seleccionar imágenes</label>
-                <input type="file" name="images" multiple accept="image/*">
+                <input type="file" id="id_images" name="images" multiple accept="image/*" onchange="previewImages(this)">
                 <small style="color: var(--text-muted);">Puedes seleccionar múltiples imágenes</small>
             </div>
+            <div id="new-image-preview" class="new-image-preview"></div>
             {% if property %}
             <div class="image-preview">
                 {% for img in property.images.all %}
-                <img src="{{ img.image.url }}" alt="">
+                <div class="image-preview-item">
+                    <img src="{{ img.image.url }}" alt="">
+                    <button type="button" class="remove-image" onclick="removeExistingImage({{ img.pk }}, this)">×</button>
+                </div>
                 {% endfor %}
             </div>
             {% endif %}
         </div>
+
+        <script>
+        function previewImages(input) {
+            const preview = document.getElementById('new-image-preview');
+            preview.innerHTML = '';
+            if (input.files) {
+                for (let i = 0; i < input.files.length; i++) {
+                    const file = input.files[i];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        preview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        function removeExistingImage(imageId, btn) {
+            if (confirm('¿Eliminar esta imagen?')) {
+                btn.closest('.image-preview-item').remove();
+                // Add hidden input to track removed images
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'removed_images';
+                input.value = imageId;
+                btn.closest('form').appendChild(input);
+            }
+        }
+        </script>
 
         <button type="submit" class="btn btn-primary btn-lg btn-block">
             <i class="bi bi-check-circle"></i> Guardar Propiedad

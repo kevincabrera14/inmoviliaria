@@ -52,7 +52,7 @@ class PropertyForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'property_type': forms.Select(attrs={'class': 'form-select'}),
             'operation_type': forms.Select(attrs={'class': 'form-select'}),
-            'area': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'area': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 234, 234-250, Aprox. 234 m²'}),
             'rooms': forms.NumberInput(attrs={'class': 'form-control'}),
             'bathrooms': forms.NumberInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),

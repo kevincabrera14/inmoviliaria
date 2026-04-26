@@ -1,9 +1,11 @@
+{% load property_extras %}
 <a href="{% url 'properties:detail' property.pk %}" class="ix-property-card" aria-label="Ver propiedad: {{ property.title }}">
     <article class="ix-property-card__inner">
-        {% if property.images.first %}
+        {% with property.images.first as first_image %}
+        {% if first_image %}
         <div class="ix-property-card__image">
             <img
-                src="{{ property.images.first.image.url }}"
+                src="{{ first_image.image.url }}"
                 alt="{{ property.title }}"
                 loading="lazy"
             >
@@ -24,7 +26,7 @@
 
             <div class="ix-property-card__price">
                 <span class="ix-property-card__price-value">
-                    ${{ property.price|floatformat:0 }}
+                    {{ property.price|format_price }}
                 </span>
                 <span class="ix-property-card__price-type">
                     / {{ property.get_operation_type_display }}
@@ -39,7 +41,7 @@
                 {% if property.area %}
                 <span class="ix-property-card__meta-item">
                     <i class="bi bi-rulers"></i>
-                    {{ property.area }} m²
+                    {{ property.area }}
                 </span>
                 {% endif %}
                 {% if property.rooms %}

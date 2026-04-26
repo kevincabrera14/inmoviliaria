@@ -66,6 +66,11 @@ def vendor_property_edit(request, pk):
         if form.is_valid():
             form.save()
 
+            # Eliminar imágenes marcadas
+            removed_ids = request.POST.getlist('removed_images')
+            if removed_ids:
+                PropertyImage.objects.filter(pk__in=removed_ids, property=property_obj).delete()
+
             # Agregar nuevas imágenes
             images = request.FILES.getlist('images')
             for i, image in enumerate(images):
