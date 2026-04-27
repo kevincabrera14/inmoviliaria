@@ -346,38 +346,30 @@
 {% if images and images.count > 1 %}
 <script>
 (function () {
-    // Construir array con url y tipo de cada archivo
-    const media = [
-        {% for img in images %}
-        {
-            url: "{{ img.image.url }}",
-            isVideo: {{ img.image.url|lower|slice:"-4:" }} === ".mp4" ||
-                     "{{ img.image.url|lower|slice:'-4:' }}" === ".mov" ||
-                     "{{ img.image.url|lower|slice:'-5:' }}" === ".webm"
-        }{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ];
+    var media = [];
+    {% for img in images %}
+    media.push("{{ img.image.url }}");
+    {% endfor %}
 
-    let current = 0;
-    const container = document.querySelector('.ix-detail-main-image');
-    const thumbWraps = document.querySelectorAll('.ix-thumb-wrap');
-    const counter = document.getElementById('ix-counter');
+    var current = 0;
+    var container = document.querySelector('.ix-detail-main-image');
+    var thumbWraps = document.querySelectorAll('.ix-thumb-wrap');
+    var counter = document.getElementById('ix-counter');
 
     function isVideo(url) {
-        const u = url.toLowerCase();
-        return u.endsWith('.mp4') || u.endsWith('.mov') || u.endsWith('.webm') || u.endsWith('.avi');
+        url = url.toLowerCase();
+        return url.slice(-4) === '.mp4' || url.slice(-4) === '.mov' || url.slice(-5) === '.webm' || url.slice(-4) === '.avi';
     }
 
     function updateMain() {
-        const item = media[current];
-        // Quitar elemento anterior (img o video) pero dejar botones y counter
-        const old = document.getElementById('ix-main-media');
+        var item = media[current];
+        var old = document.getElementById('ix-main-media');
         if (old) old.remove();
 
-        let el;
-        if (isVideo(item.url)) {
+        var el;
+        if (isVideo(item)) {
             el = document.createElement('video');
-            el.src = item.url;
+            el.src = item;
             el.controls = true;
             el.autoplay = true;
             el.muted = true;
@@ -385,50 +377,45 @@
             el.setAttribute('playsinline', '');
         } else {
             el = document.createElement('img');
-            el.src = item.url;
-            el.alt = document.querySelector('.ix-detail-title') ?
-                     document.querySelector('.ix-detail-title').textContent : '';
+            el.src = item;
+            var titleEl = document.querySelector('.ix-detail-title');
+            el.alt = titleEl ? titleEl.textContent : '';
         }
         el.id = 'ix-main-media';
-        // Insertar antes de los botones (primer hijo del container)
         container.insertBefore(el, container.firstChild);
 
-        // Actualizar miniaturas activas
-        thumbWraps.forEach(function (w, i) {
+        thumbWraps.forEach(function(w, i) {
             w.classList.toggle('ix-thumb-active', i === current);
         });
 
-        // Actualizar contador
         if (counter) counter.textContent = (current + 1) + ' / ' + media.length;
     }
 
-    window.changeMedia = function (dir) {
+    window.changeMedia = function(dir) {
         current += dir;
         if (current < 0) current = media.length - 1;
         if (current >= media.length) current = 0;
         updateMain();
     };
 
-    window.goToMedia = function (index) {
+    window.goToMedia = function(index) {
         current = index;
         updateMain();
     };
 
-    // Teclado ← →
-    document.addEventListener('keydown', function (e) {
+    document.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowLeft') changeMedia(-1);
         if (e.key === 'ArrowRight') changeMedia(1);
     });
 
-    // Swipe táctil
-    let touchStartX = 0;
-    container.addEventListener('touchstart', function (e) {
+    var touchStartX = 0;
+    container.addEventListener('touchstart', function(e) {
         touchStartX = e.changedTouches[0].clientX;
-    }, { passive: true });
-    container.addEventListener('touchend', function (e) {
-        const diff = touchStartX - e.changedTouches[0].clientX;
+    }, {passive: true});
+    container.addEventListener('touchend', function(e) {
+        var diff = touchStartX - e.changedTouches[0].clientX;
         if (Math.abs(diff) > 40) changeMedia(diff > 0 ? 1 : -1);
-    }, { passive: true });
+    }, {passive: true});
 })();
 </script>
 {% endif %}
